@@ -596,7 +596,7 @@
 
         if (!token) {
           // If no token, redirect to login page
-          window.location.href = "login.html";
+          window.location.href = "landingPage.html";
           return;
         }
 
@@ -631,7 +631,7 @@
           }
 
           if (!data.valid) {
-            window.location.href = "login.html";
+            window.location.href = "landingPage.html";
           }
 
           getGraphData(5);
@@ -756,7 +756,7 @@
         } catch (error) {
           console.error("Error validating token:", error);
           // Redirect to login if there's an error
-          window.location.href = "login.html";
+          window.location.href = "landingPage.html";
         }
       }
 
