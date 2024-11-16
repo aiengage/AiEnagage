@@ -123,11 +123,11 @@ router.post("/payment", async (req, res) => {
         },
       ],
       mode: "subscription",
-      success_url: `https://aicalling-demo.onrender.com/api/auth/success/${userEmail}/${plan}/${amount}`,
+      success_url: `https://aienagage.onrender.com/api/auth/success/${userEmail}/${plan}/${amount}`,
 
      // success_url: `http://localhost:3000/api/auth/success/${userEmail}/${plan}/${amount}`,
     
-      cancel_url: "https://aicalling-demo.onrender.com/api/auth/failed",   
+      cancel_url: "https://aienagage.onrender.com/api/auth/failed",   
 
      // cancel_url: "http://localhost:3000/api/auth/failed",      
 
@@ -206,8 +206,8 @@ cron.schedule("0 0 1 * *", async () => {
         ],
         mode: "payment",
         customer_email: user.email,
-        success_url: `https://aicalling-demo.onrender.com/api/auth/success/${user.email}/${plan}/${amount}`,
-        cancel_url: "https://aicalling-demo.onrender.com/api/auth/failed",
+        success_url: `https://aienagage.onrender.com/api/auth/success/${user.email}/${plan}/${amount}`,
+        cancel_url: "https://aienagage.onrender.com/api/auth/failed",
       });
 
       console.log(`Created session for user ${user.email}: ${session.id}`);
