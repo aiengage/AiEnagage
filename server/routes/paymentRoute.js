@@ -169,7 +169,7 @@ router.get("/success/:email/:payment/:amount", async (req, res) => {
       amount: amount,
     });
 
-    res.redirect("https://ai-calling-demo-otyj.vercel.app/paymentSuccess.html");
+    res.redirect("https://www.aiengage.ai/paymentSuccess.html");
 
    // res.redirect("http://127.0.0.1:5501/client/dist/paymentSuccess.html");
   } catch (err) {
@@ -181,7 +181,7 @@ router.get("/success/:email/:payment/:amount", async (req, res) => {
 
 // Route for failed payment
 router.get("/failed", (req, res) => {
-  res.redirect("https://ai-calling-demo-otyj.vercel.app/paymentFailed.html");
+  res.redirect("https://www.aiengage.ai/paymentFailed.html");
 });
 
 // Schedule cron job for monthly subscription renewal
