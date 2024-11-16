@@ -387,7 +387,7 @@ router.post("/add-subUser", async (req, res) => {
     adminData.subUsers.push(newSubUser._id);
     await adminData.save();
 
-    const resetUrl = `https://ai-calling-demo-otyj.vercel.app/passwordreset.html?token=${resetToken}&email=${newSubUser.email}`;
+    const resetUrl = `https://www.aiengage.ai/passwordreset.html?token=${resetToken}&email=${newSubUser.email}`;
     console.log(resetUrl);
     await sendPasswordResetEmail(newSubUser.email, resetUrl);
 
