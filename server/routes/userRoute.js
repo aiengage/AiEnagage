@@ -588,42 +588,50 @@ router.post("/forgot-password", async (req, res) => {
 // });
 
 
-router.post("/forgot-password/:id/:token", async (req, res) => {
+rrouter.post("/forgot-password/:id/:token", async (req, res) => {
   const { id, token } = req.params;
   const { password } = req.body;
+
   try {
-    const oldUser = await User.findOne({ _id: id });
-    if (!oldUser) {
-      return res
-        .status(400)
-        .json({ message: "User Not Exists!", success: false });
+    // Check in the User model
+    let user = await User.findOne({ _id: id });
+
+    if (!user) {
+      // Check in the SubUser model if not found in User
+      user = await SubUser.findOne({ _id: id });
+      if (!user) {
+        return res
+          .status(400)
+          .json({ message: "User Not Found", success: false });
+      }
     }
 
-    // const secret = JWT_SECRET + oldUser.password;
-    const secret = process.env.JWT_SECRET + oldUser.password;
-    try {
-      jwt.verify(token, secret);
-      const encryptedPassword = await bcrypt.hash(password, 10);
-      await User.updateOne(
-        {
-          _id: id,
-        },
-        {
-          $set: {
-            password: encryptedPassword,
-          },
-        }
-      );
-      res.status(200).json({ message: "Password Update", success: true });
-    } catch (error) {
-      return res
-        .status(400)
-        .json({ message: "Something Went Wrong", success: false });
-    }
+    // Generate secret key using user's current password
+    const secret = process.env.JWT_SECRET + user.password;
+
+    // Verify the token
+    jwt.verify(token, secret);
+
+    // Encrypt new password
+    const encryptedPassword = await bcrypt.hash(password, 10);
+
+    // Update password in the respective model
+    const model = user instanceof User ? User : SubUser;
+
+    await model.updateOne(
+      { _id: id },
+      { $set: { password: encryptedPassword } }
+    );
+
+    return res.status(200).json({ message: "Password Updated", success: true });
   } catch (error) {
-    return res.status(500).json({ message: "Server error", success: false });
+    console.error("Error resetting password:", error);
+    return res
+      .status(500)
+      .json({ message: "Server Error", success: false });
   }
 });
+
 // router.post("/forgot-password/:id/:token", async (req, res) => {
 //   const { id, token } = req.params;
 //   const { password } = req.body;
