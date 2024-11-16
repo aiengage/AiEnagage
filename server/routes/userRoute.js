@@ -26,7 +26,7 @@ const client = twilio(accountSid, authToken);
 const axios = require("axios");
 const VAPI_API_KEY = process.env.VAPI_API_KEY;
 const API_URL = "https://api.vapi.ai/call";
-const   SENDGRID_API_KEY = process.env;
+const SENDGRID_API_KEY = process.env;
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(SENDGRID_API_KEY);
 
@@ -481,7 +481,7 @@ router.post("/forgot-password", async (req, res) => {
 
     const msg = {
       to: email,
-      from: "choudhardiv@gmail.com", 
+      from: "choudhardiv@gmail.com",
       subject: "Password Reset - Mazer",
       html: `
       <!DOCTYPE html>
@@ -588,7 +588,7 @@ router.post("/forgot-password", async (req, res) => {
 // });
 
 
-rrouter.post("/forgot-password/:id/:token", async (req, res) => {
+router.post("/forgot-password/:id/:token", async (req, res) => {
   const { id, token } = req.params;
   const { password } = req.body;
 
@@ -1615,7 +1615,7 @@ router.get("/download-sms", (req, res) => {
   });
 });
 router.get("/download-mail", (req, res) => {
-  const filePath = path.join(__dirname, "../sample/demo_mail-server.xlsx"); 
+  const filePath = path.join(__dirname, "../sample/demo_mail-server.xlsx");
   res.download(filePath, "sample-mail.xlsx", (err) => {
     if (err) {
       console.error("Error downloading file:", err);
