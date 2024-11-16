@@ -562,7 +562,7 @@ router.get("/forgot-password/:id/:token", async (req, res) => {
   const { id, token } = req.params;
 
   try {
-    const oldUser = await User.findOne({ _id: id });
+    const oldUser = await User.findById(id);
     if (!oldUser) {
       return res
         .status(400)
@@ -587,42 +587,42 @@ router.get("/forgot-password/:id/:token", async (req, res) => {
   }
 });
 
-router.post("/forgot-password/:id/:token", async (req, res) => {
-  const { id, token } = req.params;
-  const { password } = req.body;
-  try {
-    const oldUser = await User.findOne({ _id: id });
-    if (!oldUser) {
-      return res
-        .status(400)
-        .json({ message: "User Not Exists!", success: false });
-    }
+// router.post("/forgot-password/:id/:token", async (req, res) => {
+//   const { id, token } = req.params;
+//   const { password } = req.body;
+//   try {
+//     const oldUser = await User.findOne({ _id: id });
+//     if (!oldUser) {
+//       return res
+//         .status(400)
+//         .json({ message: "User Not Exists!", success: false });
+//     }
 
-    // const secret = JWT_SECRET + oldUser.password;
-    const secret = process.env.JWT_SECRET + oldUser.password;
-    try {
-      jwt.verify(token, secret);
-      const encryptedPassword = await bcrypt.hash(password, 10);
-      await User.updateOne(
-        {
-          _id: id,
-        },
-        {
-          $set: {
-            password: encryptedPassword,
-          },
-        }
-      );
-      res.status(200).json({ message: "Password Update", success: true });
-    } catch (error) {
-      return res
-        .status(400)
-        .json({ message: "Something Went Wrong", success: false });
-    }
-  } catch (error) {
-    return res.status(500).json({ message: "Server error", success: false });
-  }
-});
+//     // const secret = JWT_SECRET + oldUser.password;
+//     const secret = process.env.JWT_SECRET + oldUser.password;
+//     try {
+//       jwt.verify(token, secret);
+//       const encryptedPassword = await bcrypt.hash(password, 10);
+//       await User.updateOne(
+//         {
+//           _id: id,
+//         },
+//         {
+//           $set: {
+//             password: encryptedPassword,
+//           },
+//         }
+//       );
+//       res.status(200).json({ message: "Password Update", success: true });
+//     } catch (error) {
+//       return res
+//         .status(400)
+//         .json({ message: "Something Went Wrong", success: false });
+//     }
+//   } catch (error) {
+//     return res.status(500).json({ message: "Server error", success: false });
+//   }
+// });
 
 router.get("/check-credit", verifyToken, async (req, res) => {
   try {

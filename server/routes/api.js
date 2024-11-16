@@ -259,7 +259,7 @@ const verifyTokenSms = async (req, res, next) => {
 
     if (req.role === "subuser") {
       // Find subuser and populate admin's credentials
-      const subUser = await SubUser.findById(req.userId).populate("adminId");
+      const subUser = await subUserSchema.findById(req.userId).populate("adminId");
       if (!subUser) {
         return res.status(404).json({ message: "Subuser not found" });
       }
