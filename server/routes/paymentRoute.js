@@ -56,7 +56,7 @@ const sendEmail = async (to, subject, { plan, amount, customMessage }) => {
           <p><strong>Subscription Plan:</strong> ${plan}</p>
           <p><strong>Amount:</strong> ${amount} credits</p>
         </div>
-        <a class="cta" href="https://aiengage.ai/login.html">Go To Login</a>
+        <a class="cta" href="https://www.aiengage.ai/login.html">Go To Login</a>
 
 
      
@@ -169,7 +169,7 @@ router.get("/success/:email/:payment/:amount", async (req, res) => {
       amount: amount,
     });
 
-    res.redirect("https://aiengage.ai/paymentSuccess.html");
+    res.redirect("https://www.aiengage.ai/paymentSuccess.html");
 
    // res.redirect("http://127.0.0.1:5501/client/dist/paymentSuccess.html");
   } catch (err) {
@@ -181,7 +181,7 @@ router.get("/success/:email/:payment/:amount", async (req, res) => {
 
 // Route for failed payment
 router.get("/failed", (req, res) => {
-  res.redirect("https://aiengage.ai/paymentFailed.html");
+  res.redirect("hhttps://www.aiengage.ai/paymentFailed.html");
 });
 
 // Schedule cron job for monthly subscription renewal
