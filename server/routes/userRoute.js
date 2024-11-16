@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const User = require("../models/userModal.js");
 const router = express.Router();
 require("dotenv").config();
+
 const nodemailer = require("nodemailer");
 const otpStore = {};
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -476,7 +477,7 @@ router.post("/forgot-password", async (req, res) => {
     });
 
     // Password reset link
-    const link = `https://ai-calling-demo-otyj.vercel.app/passwordForgot.html?id=${user._id}&token=${token}`;
+    const link = `https://www.aiengage.ai/passwordForgot.html?id=${user._id}&token=${token}`;
 
     const msg = {
       to: email,
