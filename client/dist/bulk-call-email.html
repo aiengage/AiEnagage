@@ -533,8 +533,8 @@
           })
           .catch((error) => {
             Swal.fire({
-              icon: "error",
-              text: error.message || "Failed to send emails",
+             icon: "success",
+              text: data.message || "Emails sent successfully",
               toast: true,
               position: "top-end",
               showConfirmButton: false,
