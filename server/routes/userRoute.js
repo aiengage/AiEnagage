@@ -1085,23 +1085,22 @@ router.post("/config", async (req, res) => {
 router.get("/get-twilio-data", verifyToken, async (req, res) => {
   try {
     const { userId, role } = req;
-    const { days } = req.query; // Get 'days' parameter from query string
+    const daysBack = parseInt(req.query.days) || 1;
 
     let twilioSid, twilioToken;
-    const daysBack = parseInt(days) || 1;
+
     if (role === "admin") {
       const adminUser = await User.findById(userId);
-      if (!adminUser)
-        return res.status(404).json({ message: "Admin not found" });
+      if (!adminUser) return res.status(404).json({ message: "Admin not found" });
       twilioSid = adminUser.twilioSid;
       twilioToken = adminUser.twilioToken;
     } else if (role === "subuser") {
       const subUser = await SubUser.findById(userId);
-      if (!subUser)
-        return res.status(404).json({ message: "Subuser not found" });
+      if (!subUser) return res.status(404).json({ message: "Subuser not found" });
+
       const admin = await User.findById(subUser.adminId);
-      if (!admin)
-        return res.status(404).json({ message: "Admin for subuser not found" });
+      if (!admin) return res.status(404).json({ message: "Admin for subuser not found" });
+
       twilioSid = admin.twilioSid;
       twilioToken = admin.twilioToken;
     }
@@ -1110,36 +1109,41 @@ router.get("/get-twilio-data", verifyToken, async (req, res) => {
       return res.status(400).json({ message: "Twilio credentials missing" });
     }
 
-    // Date range for filtering messages (based on 'days' parameter)
+    // Date range for filtering messages
     const today = new Date();
-    const formattedEndDate = today.toISOString().split("T")[0];
     const startDate = new Date();
-    startDate.setDate(today.getDate() - daysBack); // Get messages from 'days' before
-    const formattedStartDate = startDate.toISOString().split("T")[0];
+    startDate.setDate(today.getDate() - daysBack);
 
-    // Fetch the messages from Twilio API
+    // Fetch messages from Twilio API
     const twilioResponse = await axios.get(
-      `https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json?DateSent>=${formattedStartDate}&DateSent<=${formattedEndDate}`,
+      `https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`,
       {
         auth: {
           username: twilioSid,
           password: twilioToken,
         },
+        params: {
+          DateSentAfter: startDate.toISOString().split("T")[0],
+          DateSentBefore: today.toISOString().split("T")[0],
+          PageSize: 100, // Limit the number of messages per request
+        },
       }
     );
 
-    // Return the last 3 messages
-    const messages = twilioResponse.data.messages.slice(0, 3);
+    console.log(twilioResponse)
+    const messages = twilioResponse.data.messages;
+
     res.status(200).json({
       success: true,
-      messages,
-      total: twilioResponse.data.messages.length,
+      messages: messages.slice(0, 3), // Return only the last 3 messages
+      total: messages.length,
     });
   } catch (error) {
     console.error(`Error fetching Twilio messages: ${error.message}`);
-    res
-      .status(500)
-      .json({ success: false, message: "Failed to fetch Twilio messages" });
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch Twilio messages",
+    });
   }
 });
 
