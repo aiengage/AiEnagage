@@ -98,6 +98,40 @@ router.post("/verify-otp", async (req, res) => {
   }
 });
 
+const verifyAndFetchUser = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ message: "Access denied. No token provided." });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.userId = decoded.userId;
+    req.role = decoded.role;
+
+    let user;
+    if (req.role === "subuser") {
+      user = await SubUser.findById(req.userId).populate("adminId");
+      if (!user) return res.status(404).json({ message: "SubUser not found." });
+      req.twilioCredentials = {
+        token: user.adminId.twilioToken,
+        sid: user.adminId.twilioSid,
+        phone: user.adminId.twilioNum,
+      };
+    } else {
+      user = await User.findById(req.userId);
+      if (!user) return res.status(404).json({ message: "User not found." });
+      req.twilioCredentials = {
+        token: user.twilioToken,
+        sid: user.twilioSid,
+        phone: user.twilioNum,
+      };
+    }
+    next();
+  } catch (error) {
+    console.error("Error verifying token:", error);
+    res.status(400).json({ message: "Invalid token." });
+  }
+};
+
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -280,31 +314,29 @@ router.post("/update-profile", verifyToken, async (req, res) => {
   }
 });
 
-router.get("/twilio/messages", async (req, res) => {
+router.get("/twilio/messages", verifyAndFetchUser, async (req, res) => {
   try {
+    const { token, sid } = req.twilioCredentials;
+    if (!token || !sid) {
+      return res.status(400).json({ message: "Twilio credentials not configured." });
+    }
+
+    const client = twilio(sid, token);
+
     const days = parseInt(req.query.days) || 15;
     const today = new Date();
     const startDate = new Date();
-
     startDate.setDate(today.getDate() - days);
 
-    const formattedStartDate = startDate.toISOString().split("T")[0];
-    const formattedEndDate = today.toISOString().split("T")[0];
-
     const messages = await client.messages.list({
-      dateSentAfter: new Date(formattedStartDate),
-      dateSentBefore: new Date(formattedEndDate),
+      dateSentAfter: startDate,
+      dateSentBefore: today,
       limit: 100,
     });
 
-    // Get the total length of messages
     const totalLength = messages.length;
-
-    // Get the latest three messages
     const latestThreeMessages = messages.slice(0, 3);
 
-    console.log(latestThreeMessages);
-    console.log(totalLength);
     res.json({ latestThreeMessages, totalLength });
   } catch (error) {
     console.error("Error fetching messages:", error);
