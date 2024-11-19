@@ -1321,7 +1321,8 @@ router.post("/transcript-all", verifyToken, async (req, res) => {
     const twilioCalls = await twilioClient.calls.list({ limit: 500 });
 
     // Fetch call transcripts from VAPI client (assuming client1 is correctly configured)
-    const vapiResponse = await client1.calls.list();
+    const vapiResponse = await twilioClient.calls.list();
+    
     console.log(vapiResponse[0])
     const transcripts = vapiResponse.map(call => ({
       name: call.callerName || "Name not available",
