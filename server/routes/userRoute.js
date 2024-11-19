@@ -1060,7 +1060,7 @@ router.post("/request-demo", verifyToken, async (req, res) => {
 
 const { VapiClient } = require("@vapi-ai/server-sdk");
 const client1 = new VapiClient({
-  token: "22576079-730d-4707-b8ab-f780113249f3",
+  token: "773cc432-287b-4286-8009-2e3649f7db75",
 });
 
 router.post("/config", async (req, res) => {
