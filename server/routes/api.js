@@ -98,6 +98,14 @@ router.post("/send-emails", verifyToken, async (req, res) => {
       fromEmail = adminUser.sendGridEmail; // Get admin's email
       sgMail.setApiKey(adminUser.sendGridApiKey); // Set API key for SendGrid
     }
+    else if (role === "super_admin") {
+      user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "Super admin not found" });
+      }
+      fromEmail = user.sendGridEmail;
+      sgMail.setApiKey(user.sendGridApiKey);
+    } 
 
     // Calculate total emails to be sent
     // Assuming each email costs 1 credit

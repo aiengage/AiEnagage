@@ -307,12 +307,13 @@
         const editConfig = document.getElementById("edit-config");
         const sendConfig = document.getElementById("send-config");
         if (role === "admin") {
-          editConfig.style.display = "block";
-          sendConfig.style.display = "block";
+          
         }
         //console.log(role);
         if (role === "admin" || role === "super_admin") {
           document.getElementById("admin-super_admin").style.display = "block";
+          editConfig.style.display = "block";
+          sendConfig.style.display = "block";
         }
 
 

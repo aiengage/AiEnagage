@@ -705,9 +705,11 @@ router.get("/check-credit", verifyToken, async (req, res) => {
   try {
     const { userId, role } = req;
     let user;
-    let adminUser; // For storing admin details if the role is subuser
+    let adminUser;
+     // For storing admin details if the role is subuser
+  
 
-    if (role === "admin") {
+     if (role === "admin") {
       // Find the user directly if they are an admin
       user = await User.findById(userId);
     } else if (role === "subuser") {
@@ -717,8 +719,24 @@ router.get("/check-credit", verifyToken, async (req, res) => {
         // Find the corresponding admin using adminId from the subuser document
         adminUser = await User.findById(user.adminId);
       }
-    }
+    } else if (role === "super_admin") {
+      // Fetch user details directly for super admin
+      user = await User.findById(userId);
 
+      // Send details directly for super_admin
+      if (!user) {
+        return res.status(404).json({ message: "Super admin user not found" });
+      }
+      const response = {
+        message: "Sufficient credits available",
+        vapiPhoneNumberId:
+          user.vapiPhoneNumberId,
+        userId: userId,
+      };
+
+    return  res.status(200).json(response);
+     
+    }
     if (!user || (role === "subuser" && !adminUser)) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -751,11 +769,25 @@ router.get("/update-credit", verifyToken, async (req, res) => {
 
     // Check if the role is 'admin' or 'subuser'
     if (role === "admin") {
+      // Find the user directly if they are an admin
       user = await User.findById(userId);
     } else if (role === "subuser") {
-      user = await SubUser.findById(userId).populate("adminId");
+      // Find the subuser
+      user = await SubUser.findById(userId);
+      if (user && user.adminId) {
+        // Find the corresponding admin using adminId from the subuser document
+        adminUser = await User.findById(user.adminId);
+      }
+    } else if (role === "super_admin") {
+      // Fetch user details directly for super admin
+      user = await User.findById(userId);
+      return res.json({
+        message: "Credit updated successfully",
+        credits: user.credits,
+      });
     }
 
+    console.log(user)
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -861,6 +893,16 @@ router.post("/check-bulk-credit", verifyToken, async (req, res) => {
         // Retrieve admin's information if subuser has an associated admin
         adminData = await User.findById(user.adminId);
       }
+    }
+    else if(role === "super_admin")
+    {
+      user = await User.findById(userId);
+      return res.json({
+        message: "Sufficient credits available",
+        remainingCredits: availableCredits,
+        vapiPhoneNumberId:
+          user.vapiPhoneNumberId,
+      });
     }
 
     if (!user) {
@@ -1346,7 +1388,10 @@ router.get("/admin/users", async (req, res) => {
     const decoded = jwt.verify(token, JWT_SECRET);
     const user = await User.findById(decoded.userId);
 
-    if (user.role !== "admin") {
+    console.log(user.role)
+    
+    if (user.role !== "admin" && user.role !== "super_admin")
+      {
       return res.status(403).json({ message: "Access denied: Admins only" });
     }
     res.status(200).json(user);
