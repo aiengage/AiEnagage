@@ -1064,6 +1064,7 @@ router.post("/config", async (req, res) => {
   try {
     const superAdminUser = await User.findOne({ role: "super_admin" });
     const tokenCall = superAdminUser.tokenCall;
+    console.log(tokenCall)
     const client1 = new VapiClient({
       token: tokenCall,
     });
