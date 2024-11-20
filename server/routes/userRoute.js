@@ -1744,7 +1744,7 @@ const updateEnvFile = (tokenCall) => {
 
   const content = ` const url = " // http://localhost:3000";
 const url = "https://aienagage.onrender.com";
-const tokenCall = "${tokenCall}";`;
+const callToken = "${tokenCall}";`;
 
   // Write the content to the env.js file
   fs.writeFileSync(envFilePath, content, "utf8", (err) => {
