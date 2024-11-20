@@ -174,6 +174,12 @@
                     <span>Connect Twilio</span>
                   </a>
                 </li>
+                <li class="sidebar-item" style="display: none;" id="edit-vapi">
+                  <a href="vapiConfig.html" class="sidebar-link">
+                    <i class="bi bi-calendar-check-fill"></i>
+                    <span>Add Vapi</span>
+                  </a>
+                </li>
 
 
                 <div id="bulk-email-sms" style="display: none">
@@ -483,6 +489,12 @@
         console.log(data);
 
         const role = data.role;
+
+        const vapiConfig = document.getElementById("edit-vapi");
+
+if (role === "super_admin") {
+    vapiConfig.style.display = "block";
+}
 
         //console.log(role);
 

@@ -274,6 +274,13 @@ button:hover {
                   </a>
                 </li>
 
+                <li class="sidebar-item" style="display: none;" id="edit-vapi">
+                  <a href="vapiConfig.html" class="sidebar-link">
+                    <i class="bi bi-calendar-check-fill"></i>
+                    <span>Add Vapi</span>
+                  </a>
+                </li>
+
                 
                 <div id="bulk-email-sms" style="display: none">
                   <li class="sidebar-item">
@@ -578,6 +585,11 @@ button:hover {
           const role = data.data.role;
           const editConfig = document.getElementById("edit-config");
           const sendConfig = document.getElementById("send-config");
+          const vapiConfig = document.getElementById("edit-vapi");
+
+if (role === "super_admin") {
+    vapiConfig.style.display = "block";
+}
           if(role === "admin")
           {
                

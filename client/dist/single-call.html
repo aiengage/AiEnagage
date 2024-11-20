@@ -135,6 +135,12 @@
                   <span>Connect Twilio</span>
                 </a>
               </li>
+              <li class="sidebar-item" style="display: none;" id="edit-vapi">
+                <a href="vapiConfig.html" class="sidebar-link">
+                  <i class="bi bi-calendar-check-fill"></i>
+                  <span>Add Vapi</span>
+                </a>
+              </li>
 
 
               
@@ -439,6 +445,11 @@
           document.getElementById("bulk-email-sms").style.display = "block";
 
         }
+        const vapiConfig = document.getElementById("edit-vapi");
+
+if (role === "super_admin") {
+    vapiConfig.style.display = "block";
+}
         const editConfig = document.getElementById("edit-config");
         const sendConfig = document.getElementById("send-config");
         if (role === "admin") {
