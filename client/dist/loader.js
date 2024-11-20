@@ -15,7 +15,7 @@ function showLoader() {
       loader.remove();
     }
   }
-  
+
   // Initialize loader styles
   function initLoaderStyles() {
     const style = document.createElement('style');

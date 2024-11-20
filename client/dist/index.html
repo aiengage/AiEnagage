@@ -77,6 +77,13 @@
         margin-left: auto;
         margin-right: auto;
       }
+      /* .logo1{
+        height: 400px;
+        width: 150px;
+
+        position: fixed;
+      } */
+
     </style>
   </head>
 
@@ -88,7 +95,7 @@
             <div class="d-flex justify-content-between">
               <div class="logo">
                 <a href="index.html"
-                  ><img src="assets/images/logo/logo.png" alt="Logo" srcset=""
+                  ><img src="assets/images/logo/logo.png" alt="Logo" srcset="" class="logo1"
                 /></a>
               </div>
               <div class="toggler">
@@ -155,6 +162,12 @@
                   <a href="Edit-Config.html" class="sidebar-link">
                     <i class="bi bi-calendar-check-fill"></i>
                     <span>Connect Twilio</span>
+                  </a>
+                </li>
+                <li class="sidebar-item" style="display: none;" id="edit-vapi">
+                  <a href="vapiConfig.html" class="sidebar-link">
+                    <i class="bi bi-calendar-check-fill"></i>
+                    <span>Add Vapi</span>
                   </a>
                 </li>
               </div>
@@ -649,6 +662,7 @@
           const totalCall = document.getElementById("total-call-card");
           const demoBlock = document.getElementById("demo-block");
           const editConfig = document.getElementById("edit-config");
+          const vapiConfig = document.getElementById("edit-vapi");
           const sendConfig = document.getElementById("send-config");
 
           console.log(data.data.name);
@@ -660,6 +674,7 @@
             userSubUser.textContent = "Super_Admin";
              editConfig.style.display="block"
             sendConfig.style.display="block"
+            vapiConfig.style.display="block"
           } else if (role === "admin") {
             editConfig.style.display="block"
             sendConfig.style.display="block"

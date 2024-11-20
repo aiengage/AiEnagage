@@ -706,10 +706,10 @@ router.get("/check-credit", verifyToken, async (req, res) => {
     const { userId, role } = req;
     let user;
     let adminUser;
-     // For storing admin details if the role is subuser
-  
+    // For storing admin details if the role is subuser
 
-     if (role === "admin") {
+
+    if (role === "admin") {
       // Find the user directly if they are an admin
       user = await User.findById(userId);
     } else if (role === "subuser") {
@@ -734,8 +734,8 @@ router.get("/check-credit", verifyToken, async (req, res) => {
         userId: userId,
       };
 
-    return  res.status(200).json(response);
-     
+      return res.status(200).json(response);
+
     }
     if (!user || (role === "subuser" && !adminUser)) {
       return res.status(404).json({ message: "User not found" });
@@ -894,8 +894,7 @@ router.post("/check-bulk-credit", verifyToken, async (req, res) => {
         adminData = await User.findById(user.adminId);
       }
     }
-    else if(role === "super_admin")
-    {
+    else if (role === "super_admin") {
       user = await User.findById(userId);
       return res.json({
         message: "Sufficient credits available",
@@ -1059,12 +1058,15 @@ router.post("/request-demo", verifyToken, async (req, res) => {
 });
 
 const { VapiClient } = require("@vapi-ai/server-sdk");
-const client1 = new VapiClient({
-  token: "22576079-730d-4707-b8ab-f780113249f3",
-});
+
 
 router.post("/config", async (req, res) => {
   try {
+    const superAdminUser = await User.findOne({ role: "super_admin" });
+    const tokenCall = superAdminUser.tokenCall;
+    const client1 = new VapiClient({
+      token: tokenCall,
+    });
     const token = req.headers.authorization.split(" ")[1];
     const decoded = jwt.verify(token, JWT_SECRET);
     const userId = decoded.userId;
@@ -1296,6 +1298,11 @@ router.get("/get-call-data-all", async (req, res) => {
 });
 
 router.post("/transcript", async (req, res) => {
+  const superAdminUser = await User.findOne({ role: "super_admin" });
+  const tokenCall = superAdminUser.tokenCall;
+  const client1 = new VapiClient({
+    token: tokenCall,
+  });
   const { callSid } = req.body;
   if (!callSid) return res.status(400).json({ error: "Call SID is required" });
 
@@ -1364,7 +1371,7 @@ router.post("/transcript-all", verifyToken, async (req, res) => {
 
     // Fetch call transcripts from VAPI client (assuming client1 is correctly configured)
     const vapiResponse = await twilioClient.calls.list();
-    
+
     console.log(vapiResponse[0])
     const transcripts = vapiResponse.map(call => ({
       name: call.callerName || "Name not available",
@@ -1389,9 +1396,8 @@ router.get("/admin/users", async (req, res) => {
     const user = await User.findById(decoded.userId);
 
     console.log(user.role)
-    
-    if (user.role !== "admin" && user.role !== "super_admin")
-      {
+
+    if (user.role !== "admin" && user.role !== "super_admin") {
       return res.status(403).json({ message: "Access denied: Admins only" });
     }
     res.status(200).json(user);
@@ -1406,7 +1412,11 @@ router.put("/admin/users", async (req, res) => {
     const token = req.headers.authorization.split(" ")[1];
     const decoded = jwt.verify(token, JWT_SECRET);
     const userId = decoded.userId;
-
+    const superAdminUser = await User.findOne({ role: "super_admin" });
+    const tokenCall = superAdminUser.tokenCall;
+    const client1 = new VapiClient({
+      token: tokenCall,
+    });
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -1705,6 +1715,130 @@ router.get("/download-mail", (req, res) => {
     }
   });
 });
+
+router.get("/admin/users-callToken", async (req, res) => {
+  const token = req.headers.authorization.split(" ")[1];
+  const decoded = jwt.verify(token, JWT_SECRET);
+  const user = await User.findById(decoded.userId);
+  if (user.role === "super_admin") {
+    return res.status(201).json({ message: "Data", data: user.tokenCall });
+  }
+  return res.status(403).json({ message: "Access denied" });
+})
+
+
+const fs = require("fs");
+
+const updateEnvFile = (tokenCall) => {
+  // Adjust path as needed based on your folder structure
+  const envFilePath = path.join(__dirname, "../../client/dist/env.js");
+
+  // Debugging: Check the constructed file path
+  console.log("Path to env.js:", envFilePath);
+
+  // Check if the directory exists before writing to the file
+  if (!fs.existsSync(path.dirname(envFilePath))) {
+    console.error("Directory does not exist:", path.dirname(envFilePath));
+    return;
+  }
+
+  const content = ` const url = " // http://localhost:3000";
+const url = "https://aienagage.onrender.com";
+const tokenCall = "${tokenCall}";`;
+
+  // Write the content to the env.js file
+  fs.writeFileSync(envFilePath, content, "utf8", (err) => {
+    if (err) {
+      console.error("Error writing to env.js:", err);
+    } else {
+      console.log("env.js file updated successfully!");
+    }
+  });
+};
+
+router.put("/admin/callToken/update", async (req, res) => {
+  const token = req.headers.authorization.split(" ")[1];
+  const decoded = jwt.verify(token, JWT_SECRET);
+  const user = await User.findById(decoded.userId);
+
+  console.log(req.body)
+  if (user.role === "super_admin") {
+    const dat = await User.findByIdAndUpdate(user._id, { tokenCall: req.body.sendGridEmail })
+    updateEnvFile(req.body.sendGridEmail);
+    return res.status(201).json({ message: "Data Updated" });
+  }
+  return res.status(403).json({ message: "Access denied" });
+})
+
+router.delete("/admin/vapi-delete", async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await User.findById(decoded.userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.role === "super_admin") {
+      // Set the tokenCall field to an empty string
+      await User.findByIdAndUpdate(user._id, { tokenCall: "" });
+      updateEnvFile("");
+      return res.status(200).json({ message: "Field cleared successfully" });
+    }
+
+    return res.status(403).json({ message: "Access denied" });
+  } catch (error) {
+    console.error("Error in delete route:", error);
+    return res.status(500).json({ message: "Internal Server Error", error });
+  }
+});
+
+router.post("/config-call", async (req, res) => {
+  try {
+    console.log(req.body.tokenCall)
+    // Check if the Authorization header is present
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Authorization header missing or invalid" });
+    }
+
+    // Extract the token
+    const token = authHeader.split(" ")[1];
+
+    // Verify the token
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    // Find the user based on the decoded userId
+    const user = await User.findById(decoded.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check for super_admin role
+    if (user.role !== "super_admin") {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    // Update the user's callToken
+    if (!req.body.tokenCall) {
+      return res.status(400).json({ message: "Missing tokenCall in request body" });
+    }
+
+    await User.findByIdAndUpdate(user._id, { tokenCall: req.body.tokenCall });
+    updateEnvFile(req.body.tokenCall);
+    return res.status(201).json({ message: "Data Updated" });
+  } catch (error) {
+    console.error("Error in /config-call route:", error);
+
+    if (error.name === "JsonWebTokenError") {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 
 router.get("/home", authMiddleware, (req, res) => {
   res.flash("Welcome to home page");
