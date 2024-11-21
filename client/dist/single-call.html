@@ -633,6 +633,8 @@ margin-right: auto;
           },
         });
 
+        console.log(callToken)
+
         if (response.ok) {
           const data = await response.json();
           console.log(data)
@@ -689,9 +691,12 @@ margin-right: auto;
               }),
             };
 
+            
+
 
             const callResponse = await fetch("https://api.vapi.ai/call", options);
             if (callResponse.ok) {
+            
               const callData = await callResponse.json();
               const callSid = callData.id;
               const token = localStorage.getItem("token");
