@@ -1058,96 +1058,53 @@ router.post("/request-demo", verifyToken, async (req, res) => {
 });
 
 const { VapiClient } = require("@vapi-ai/server-sdk");
-
+const client1 = new VapiClient({
+  token: "4b1711a0-b132-425e-b23d-de717e7c868c",
+});
 
 router.post("/config", async (req, res) => {
   try {
-    console.log("Request received at /config");
-
-    // Find super admin user and retrieve tokenCall
-    const superAdminUser = await User.findOne({ role: "super_admin" });
-    console.log("Super admin user:", superAdminUser);
-    const tokenCall = superAdminUser?.tokenCall;
-    console.log("Super admin tokenCall:", tokenCall);
-
-    if (!tokenCall) {
-      return res.status(400).json({ message: "Super admin tokenCall not found" });
-    }
-
-    // Initialize VapiClient
-    const client1 = new VapiClient({
-      token: tokenCall,
-    });
-    console.log("VapiClient initialized");
-
-    // Decode token from header
     const token = req.headers.authorization.split(" ")[1];
-    console.log("Token from headers:", token);
-
     const decoded = jwt.verify(token, JWT_SECRET);
-    console.log("Decoded JWT:", decoded);
-
     const userId = decoded.userId;
-    console.log("Decoded userId:", userId);
-
-    // Find user by userId
     const user = await User.findById(userId);
-    console.log("User found:", user);
-
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Extract data from request body
-    const { twilioSid, twilioToken, twilioNum } = req.body;
-    console.log("Request body:", req.body);
-
-    // Update user with Twilio details
+    const { twilioSid, twilioToken, twilioNum } =
+      req.body;
     user.twilioSid = twilioSid;
     user.twilioToken = twilioToken;
     user.twilioNum = twilioNum;
-
-    console.log("Updating user Twilio details...");
     await user.save();
-    console.log("User Twilio details saved");
 
     let vapiResponse;
-
     try {
       // Attempt to create a new phone number in the Vapi API
-      console.log("Creating new phone number in Vapi API...");
       vapiResponse = await client1.phoneNumbers.create({
         provider: "twilio",
         number: twilioNum,
         twilioAccountSid: twilioSid,
         twilioAuthToken: twilioToken,
       });
-      console.log("Vapi response:", vapiResponse);
-
       user.vapiPhoneNumberId = vapiResponse.id;
       user.vapiSipUri = vapiResponse.sipUri;
     } catch (error) {
-      console.error("Error during Vapi phone number creation:", error);
-
       // Check if the error is due to an existing phone number
       if (
         error.statusCode === 400 &&
         error.body.message.includes("Existing Phone Number")
       ) {
-        console.log("Handling existing phone number scenario...");
-
         // Extract the existing phone number ID from the error message
         const existingPhoneNumberId = error.body.message.match(
           /Existing Phone Number ([\w-]+)/
         )[1];
-        console.log("Existing phone number ID:", existingPhoneNumberId);
 
-        // Retrieve details of the existing phone number
+        // If the phone number already exists, retrieve its details
         const existingPhoneNumber = await client1.phoneNumbers.get(
           existingPhoneNumberId
         );
-        console.log("Existing phone number details:", existingPhoneNumber);
-
         user.vapiPhoneNumberId = existingPhoneNumber.id;
         user.vapiSipUri = existingPhoneNumber.sipUri;
       } else {
@@ -1156,18 +1113,16 @@ router.post("/config", async (req, res) => {
       }
     }
 
-    console.log("Saving updated user details...");
     await user.save();
-    console.log("User details saved successfully");
-
     res.status(200).json({
       message: "Configuration saved and Vapi details added successfully!",
     });
   } catch (error) {
-    console.error("An error occurred:", error);
+    console.error(error);
     res.status(500).json({ message: "An error occurred", error });
   }
 });
+
 
 
 router.get("/get-twilio-data", verifyToken, async (req, res) => {
