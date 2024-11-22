@@ -380,12 +380,6 @@
       localStorage.removeItem("token");
       window.location.href = "login.html";
     });
-
-
-
-
-
-
     function arrayBufferToBase64(buffer) {
       let binary = "";
       const bytes = new Uint8Array(buffer);
@@ -824,7 +818,8 @@ Transcript:
 ${userDetails.transcript}
     `;
 
-        const response = await fetch("https://aicalling-demo.onrender.com/api/send-email-property", {
+    console.log('Come')
+        const response = await fetch(`${url}/api/send-email-property`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -885,6 +880,7 @@ ${userDetails.transcript}
               try {
                 const isInterested = await analyzeTranscript(transcript, userDetails);
 
+                console.log(isInterested)
                 if (isInterested) {
                   console.log('📧 Sending email notification for interested lead...');
                   await sendEmailToAdmin(userDetails);
@@ -1114,9 +1110,6 @@ ${userDetails.transcript}
             startDateTime: appointmentDateTime.toISOString(),
             endDateTime: new Date(appointmentDateTime.getTime() + 60 * 60 * 1000).toISOString(), // 1 hour duration
           };
-
-          // Send event data to your event scheduling endpoint
-          //    return fetch("https://aicalling-osdb.onrender.com/calendar/events", {
           return fetch(`${url}/calendar/events`, {
             method: "POST",
             headers: {

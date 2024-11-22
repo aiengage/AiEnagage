@@ -93,15 +93,14 @@ router.post("/send-emails", verifyToken, async (req, res) => {
       }
       fromEmail = adminUser.sendGridEmail; // Get admin's email
       sgMail.setApiKey(adminUser.sendGridApiKey); // Set API key for SendGrid
-    }
-    else if (role === "super_admin") {
+    } else if (role === "super_admin") {
       user = await User.findById(userId);
       if (!user) {
         return res.status(404).json({ message: "Super admin not found" });
       }
       fromEmail = user.sendGridEmail;
       sgMail.setApiKey(user.sendGridApiKey);
-    } 
+    }
     if (user.credits < totalCost) {
       return res
         .status(403)
@@ -257,7 +256,9 @@ const verifyTokenSms = async (req, res, next) => {
 
     if (req.role === "subuser") {
       // Find subuser and populate admin's credentials
-      const subUser = await subUserSchema.findById(req.userId).populate("adminId");
+      const subUser = await subUserSchema
+        .findById(req.userId)
+        .populate("adminId");
       if (!subUser) {
         return res.status(404).json({ message: "Subuser not found" });
       }
@@ -286,6 +287,8 @@ const verifyTokenSms = async (req, res, next) => {
 router.post("/send-sms-property", verifyTokenSms, async (req, res) => {
   const { toNumber, message } = req.body;
 
+  console.log("come");
+  console.log(toNumber);
   // Use Twilio credentials from req.credentials
   const { twilioSid, twilioToken, twilioNum } = req.credentials;
   const client = require("twilio")(twilioSid, twilioToken);
@@ -297,6 +300,7 @@ router.post("/send-sms-property", verifyTokenSms, async (req, res) => {
       to: toNumber,
     });
 
+    console.log("come");
     res.status(200).json({ message: "SMS sent successfully", sms });
   } catch (error) {
     console.error("Error sending SMS:", error);
@@ -317,15 +321,15 @@ const verifyTokenEmail = async (req, res, next) => {
 
     if (req.role === "subuser") {
       // Find subuser and populate admin's credentials
-      const subUser = await SubUser.findById(req.userId).populate("adminId");
+      const subUser = await subUserSchema
+        .findById(req.userId)
+        .populate("adminId");
       if (!subUser || !subUser.adminId) {
         return res.status(404).json({ message: "Subuser or admin not found" });
       }
-
-      // Attach admin's SendGrid credentials to request
       req.sendGridApiKey = subUser.adminId.sendGridApiKey;
       req.sendGridEmail = subUser.adminId.sendGridEmail;
-      req.recipientEmail = subUser.adminId.email; // Set the recipient as the admin's email
+      req.recipientEmail = subUser.adminId.email;
     } else {
       // For admin, attach admin's own credentials and email
       const adminUser = await User.findById(req.userId);
@@ -347,13 +351,12 @@ const sendgridEmail1 = require("@sendgrid/mail");
 router.post("/send-email-property", verifyTokenEmail, async (req, res) => {
   const { subject, message } = req.body;
   try {
-    // Initialize SendGrid with the API key from the authenticated user
     sendgridEmail1.setApiKey(req.sendGridApiKey);
 
     // Define the email options
     const emailOptions = {
-      to:  req.recipientEmail,            // Recipient email from middleware
-      from: req.sendGridEmail,           // Sender's email (admin's SendGrid email)
+      to: req.recipientEmail, // Recipient email from middleware
+      from: req.sendGridEmail, // Sender's email (admin's SendGrid email)
       subject: subject || "Notification from Service",
       text: message || "This is a test email sent via SendGrid.",
     };
@@ -364,7 +367,9 @@ router.post("/send-email-property", verifyTokenEmail, async (req, res) => {
     res.status(200).json({ message: "Email sent successfully." });
   } catch (error) {
     console.error("Error sending email:", error);
-    res.status(500).json({ message: "Failed to send email", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Failed to send email", error: error.message });
   }
 });
 
