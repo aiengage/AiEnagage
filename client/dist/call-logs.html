@@ -1,449 +1,404 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Table - Mazer Admin Dashboard</title>
 
-    <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="assets/css/bootstrap.css" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AiEngage</title>
 
-    <link
-      rel="stylesheet"
-      href="assets/vendors/perfect-scrollbar/perfect-scrollbar.css"
-    />
-    <link
-      rel="stylesheet"
-      href="assets/vendors/bootstrap-icons/bootstrap-icons.css"
-    />
-    <link rel="stylesheet" href="assets/css/app.css" />
-    <link
-      rel="shortcut icon"
-      href="assets/images/favicon.svg"
-      type="image/x-icon"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
-    <style>
-      .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.4);
-      }
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/bootstrap.css" />
 
-      .modal-content {
-        background-color: #fefefe;
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%;
-        max-width: 600px;
-        position: relative;
-        top: 50%;
-        transform: translateY(-50%);
-      }
+  <link rel="stylesheet" href="assets/vendors/perfect-scrollbar/perfect-scrollbar.css" />
+  <link rel="stylesheet" href="assets/vendors/bootstrap-icons/bootstrap-icons.css" />
+  <link rel="stylesheet" href="assets/css/app.css" />
+  <link rel="shortcut icon" href="assets/images/favicon.svg" type="image/x-icon" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
 
-      .close {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-      }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 600px;
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+    }
 
-      .close:hover,
-      .close:focus {
-        color: black;
-        text-decoration: none;
-      }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
 
-      .dashboard-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px;
-        width: 100%;
-      }
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+    }
 
-      .profile-img {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        cursor: pointer;
-      }
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      width: 100%;
+    }
 
-      .burger-btn {
-        display: flex;
-        align-items: center;
-      }
+    .profile-img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
 
-      .dropdown-menu {
-        min-width: 150px;
-        text-align: center;
-      }
+    .burger-btn {
+      display: flex;
+      align-items: center;
+    }
 
-      .dropdown-item {
-        display: flex;
-        align-items: center;
-      }
+    .dropdown-menu {
+      min-width: 150px;
+      text-align: center;
+    }
 
-      .dropdown-item i {
-        margin-right: 8px;
-        /* Adds space between the icon and text */
-      }
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+    }
 
-      .dropdown-divider {
-        border: none;
-        height: 0.5px;
-        background-color: #e9ecef;
-        margin: 0.5rem 0;
-        width: calc(100% - 1rem);
-        margin-left: auto;
-        margin-right: auto;
-      }
-    </style>
-  </head>
+    .dropdown-item i {
+      margin-right: 8px;
+      /* Adds space between the icon and text */
+    }
 
-  <body>
-    <div id="app">
-      <div id="sidebar" class="active">
-        <div class="sidebar-wrapper active">
-          <div class="sidebar-header">
-            <div class="d-flex justify-content-between">
-              <div class="logo">
-                <a href="index.html"
-                  >
-                  <img 
-                  src="assets/images/logo/logo.png" 
-                  alt="Logo" 
-                  srcset="" 
-                  class="logo1" 
-                  style="width: 150px; height: auto;"
-                /></a>
-              </div>
-              <div class="toggler">
-                <a href="#" class="sidebar-hide d-xl-none d-block"
-                  ><i class="bi bi-x bi-middle"></i
-                ></a>
-              </div>
+    .dropdown-divider {
+      border: none;
+      height: 0.5px;
+      background-color: #e9ecef;
+      margin: 0.5rem 0;
+      width: calc(100% - 1rem);
+      margin-left: auto;
+      margin-right: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div id="sidebar" class="active">
+      <div class="sidebar-wrapper active">
+        <div class="sidebar-header">
+          <div class="d-flex justify-content-between">
+            <div class="logo">
+              <a href="index.html">
+                <img src="assets/images/logo/logo.png" alt="Logo" srcset="" class="logo1"
+                  style="width: 150px; height: auto;" /></a>
+            </div>
+            <div class="toggler">
+              <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
             </div>
           </div>
-          <div class="sidebar-menu">
-            <ul class="menu">
-              <li class="sidebar-title">Menu</li>
+        </div>
+        <div class="sidebar-menu">
+          <ul class="menu">
+            <li class="sidebar-title">Menu</li>
+            <li class="sidebar-item">
+              <a href="index.html" class="sidebar-link"><i class="bi bi-grid-fill"></i><span>Dashboard</span></a>
+            </li>
+            <div id="admin-subuser-features" style="display: none">
               <li class="sidebar-item">
-                <a href="index.html" class="sidebar-link"
-                  ><i class="bi bi-grid-fill"></i><span>Dashboard</span></a
-                >
+                <a href="single-call.html" class="sidebar-link">
+                  <i class="bi bi-telephone-fill"></i>
+                  <span>Single Call</span>
+                </a>
               </li>
-              <div id="admin-subuser-features" style="display: none">
-                <li class="sidebar-item">
-                  <a href="single-call.html" class="sidebar-link">
-                    <i class="bi bi-telephone-fill"></i>
-                    <span>Single Call</span>
-                  </a>
-                </li>
 
-                <li class="sidebar-item">
-                  <a href="bulk-call.html" class="sidebar-link">
-                    <i class="bi bi-stack"></i>
-                    <span>Bulk Call</span>
-                  </a>
-                </li>
-                <li class="sidebar-item active">
-                  <a href="call-logs.html" class="sidebar-link">
-                    <i class="bi bi-journal-text"></i>
-                    <span>Call Logs</span>
-                  </a>
-                </li>
-              </div>
-              <div id="admin-super_admin" style="display: none">
-                <li class="sidebar-item">
-                  <a href="users.html" class="sidebar-link">
-                    <i class="bi bi-envelope-fill"></i>
-                    <span>Users</span>
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a href="appointment.html" class="sidebar-link">
-                    <i class="bi bi-calendar-check-fill"></i>
-                    <span>Appointment</span>
-                  </a>
-                </li>
-                <li class="sidebar-item" style="display: none" id="edit-config">
-                  <a href="Edit-Config.html" class="sidebar-link">
-                    <i class="bi bi-calendar-check-fill"></i>
-                    <span>Connect Twilio</span>
-                  </a>
-                </li>
-                <li class="sidebar-item" style="display: none;" id="edit-vapi">
-                  <a href="vapiConfig.html" class="sidebar-link">
-                    <i class="bi bi-calendar-check-fill"></i>
-                    <span>Add Vapi</span>
-                  </a>
-                </li>
+              <li class="sidebar-item">
+                <a href="bulk-call.html" class="sidebar-link">
+                  <i class="bi bi-stack"></i>
+                  <span>Bulk Call</span>
+                </a>
+              </li>
+              <li class="sidebar-item active">
+                <a href="call-logs.html" class="sidebar-link">
+                  <i class="bi bi-journal-text"></i>
+                  <span>Call Logs</span>
+                </a>
+              </li>
+            </div>
+            <div id="admin-super_admin" style="display: none">
+              <li class="sidebar-item">
+                <a href="users.html" class="sidebar-link">
+                  <i class="bi bi-envelope-fill"></i>
+                  <span>Users</span>
+                </a>
+              </li>
+              <li class="sidebar-item">
+                <a href="appointment.html" class="sidebar-link">
+                  <i class="bi bi-calendar-check-fill"></i>
+                  <span>Appointment</span>
+                </a>
+              </li>
+              <li class="sidebar-item" style="display: none" id="edit-config">
+                <a href="Edit-Config.html" class="sidebar-link">
+                  <i class="bi bi-calendar-check-fill"></i>
+                  <span>Connect Twilio</span>
+                </a>
+              </li>
+              <li class="sidebar-item" style="display: none;" id="edit-vapi">
+                <a href="vapiConfig.html" class="sidebar-link">
+                  <i class="bi bi-calendar-check-fill"></i>
+                  <span>Add Vapi</span>
+                </a>
+              </li>
 
-                
 
-                <li class="sidebar-item" style="display: none" id="send-config">
-                  <a href="sendgrid-config.html" class="sidebar-link">
-                    <i class="bi bi-calendar-check-fill"></i>
-                    <span>Connect SendGrid</span>
-                  </a>
-                </li>
-              </div>
-              <div id="bulk-email-sms" style="display: none">
-                <li class="sidebar-item">
-                  <a href="bulk-call-email.html" class="sidebar-link">
-                    <i class="fa-solid fa-envelope"></i>
-                    <span>Send Bulk Email</span>
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a href="bulk-sms.html" class="sidebar-link">
-                    <i class="fa-solid fa-comments"></i>
-                    <span>Send Bulk SMS</span>
-                  </a>
-                </li>
-              </div>
-            </ul>
-          </div>
+
+              <li class="sidebar-item" style="display: none" id="send-config">
+                <a href="sendgrid-config.html" class="sidebar-link">
+                  <i class="bi bi-calendar-check-fill"></i>
+                  <span>Connect SendGrid</span>
+                </a>
+              </li>
+            </div>
+            <div id="bulk-email-sms" style="display: none">
+              <li class="sidebar-item">
+                <a href="bulk-call-email.html" class="sidebar-link">
+                  <i class="fa-solid fa-envelope"></i>
+                  <span>Send Bulk Email</span>
+                </a>
+              </li>
+              <li class="sidebar-item">
+                <a href="bulk-sms.html" class="sidebar-link">
+                  <i class="fa-solid fa-comments"></i>
+                  <span>Send Bulk SMS</span>
+                </a>
+              </li>
+            </div>
+          </ul>
         </div>
       </div>
-      <div id="main">
-        <header
-          class="dashboard-header d-flex align-items-center justify-content-between px-3 py-2"
-        >
-          <a href="#" class="burger-btn d-block d-xl-none">
-            <i class="bi bi-justify fs-3"></i>
-          </a>
+    </div>
+    <div id="main">
+      <header class="dashboard-header d-flex align-items-center justify-content-between px-3 py-2">
+        <a href="#" class="burger-btn d-block d-xl-none">
+          <i class="bi bi-justify fs-3"></i>
+        </a>
 
-          <!-- Profile Image and Dropdown Container -->
-          <div class="dropdown d-flex ms-auto">
-            <img
-              src="./assets/images/faces/profile-pic.jpg"
-              alt="Profile"
-              class="profile-img dropdown-toggle"
-              id="profileDropdown"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            />
-            <ul
-              class="dropdown-menu dropdown-menu-end"
-              aria-labelledby="profileDropdown"
-              id="dropdownMenu"
-            >
-              <li>
-                <a class="dropdown-item" href="profile.html">
-                  <i class="fa-solid fa-user"></i> Profile
-                </a>
-              </li>
-              <li></li>
-              <li>
-                <a class="dropdown-item" href="#" id="logout-btn">
-                  <i class="fa-solid fa-right-from-bracket"></i> Log Out
-                </a>
-              </li>
-            </ul>
-          </div>
-        </header>
+        <!-- Profile Image and Dropdown Container -->
+        <div class="dropdown d-flex ms-auto">
+          <img src="./assets/images/faces/profile-pic.jpg" alt="Profile" class="profile-img dropdown-toggle"
+            id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" />
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown" id="dropdownMenu">
+            <li>
+              <a class="dropdown-item" href="profile.html">
+                <i class="fa-solid fa-user"></i> Profile
+              </a>
+            </li>
+            <li></li>
+            <li>
+              <a class="dropdown-item" href="#" id="logout-btn">
+                <i class="fa-solid fa-right-from-bracket"></i> Log Out
+              </a>
+            </li>
+          </ul>
+        </div>
+      </header>
 
-        <div class="page-heading">
-          <div class="page-title">
-            <div class="row">
-              <div class="col-12 col-md-6 order-md-1 order-last">
-                <h3>Call Logs</h3>
-                <p class="text-subtitle text-muted">
-                  For user to check the call logs
-                </p>
-              </div>
-              <div class="col-12 col-md-6 order-md-2 order-first">
-                <nav
-                  aria-label="breadcrumb"
-                  class="breadcrumb-header float-start float-lg-end"
-                >
-                  <ol class="breadcrumb">
-                    <li class="breadcrumb-item">
-                      <a href="index.html">Dashboard</a>
-                    </li>
-                    <li class="breadcrumb-item active" aria-current="page">
-                      Table
-                    </li>
-                  </ol>
-                </nav>
-              </div>
+      <div class="page-heading">
+        <div class="page-title">
+          <div class="row">
+            <div class="col-12 col-md-6 order-md-1 order-last">
+              <h3>Call Logs</h3>
+              <p class="text-subtitle text-muted">
+                For user to check the call logs
+              </p>
+            </div>
+            <div class="col-12 col-md-6 order-md-2 order-first">
+              <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="index.html">Dashboard</a>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">
+                    Table
+                  </li>
+                </ol>
+              </nav>
             </div>
           </div>
+        </div>
 
-          <!-- table with light -->
-          <div class="table-responsive">
-            <table class="table table-light mb-0" id="call-logs-table">
-              <thead>
-                <tr>
-                  <th>Created At</th>
-                  <th>Ended At</th>
-                  <th>Status</th>
-                  <th>Customer Number</th>
-                  <th>Transcript</th>
-                  <th>Summary</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- Data will be inserted here by JavaScript -->
-              </tbody>
-            </table>
-          </div>
+        <!-- table with light -->
+        <div class="table-responsive">
+          <table class="table table-light mb-0" id="call-logs-table">
+            <thead>
+              <tr>
+                <th>Created At</th>
+                <th>Ended At</th>
+                <th>Status</th>
+                <th>Customer Number</th>
+                <th>Transcript</th>
+                <th>Summary</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Data will be inserted here by JavaScript -->
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Modal -->
-    <div id="myModal" class="modal">
-      <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2 id="modalTitle"></h2>
-        <p id="modalContent"></p>
-      </div>
+  <!-- Modal -->
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 id="modalTitle"></h2>
+      <p id="modalContent"></p>
     </div>
+  </div>
 
-    <script src="assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-    <script src="assets/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/main.js"></script>
-    <script src="loader.js"></script>
-    <script src="./env.js"></script>
-    <script>
-      const logoutBtn = document.getElementById("logout-btn");
+  <script src="assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+  <script src="assets/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="loader.js"></script>
+  <script src="./env.js"></script>
+  <script>
+    const logoutBtn = document.getElementById("logout-btn");
 
-      logoutBtn.addEventListener("click", () => {
-        // Remove the JWT token from localStorage
-        console.log("click");
-        localStorage.removeItem("token");
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("token");
 
-        // Redirect the user to the login page
+      // Redirect the user to the login page
 
+      window.location.href = "login.html";
+    });
+
+    function arrayBufferToBase64(buffer) {
+      let binary = "";
+      const bytes = new Uint8Array(buffer);
+      bytes.forEach((b) => (binary += String.fromCharCode(b)));
+      return window.btoa(binary);
+    }
+
+    async function validateToken() {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        // If no token, redirect to login page
         window.location.href = "login.html";
-      });
-
-      function arrayBufferToBase64(buffer) {
-        let binary = "";
-        const bytes = new Uint8Array(buffer);
-        bytes.forEach((b) => (binary += String.fromCharCode(b)));
-        return window.btoa(binary);
+        return;
       }
+      showLoader();
+      try {
+        const response = await fetch(
+          `${url}/api/auth/validate`,
 
-      async function validateToken() {
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-          // If no token, redirect to login page
-          window.location.href = "login.html";
-          return;
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        hideLoader();
+        if (!response.ok) {
+          throw new Error("Token validation failed");
         }
-        showLoader();
-        try {
-          const response = await fetch(
-           `${url}/api/auth/validate`,
 
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-            }
+        const data = await response.json();
+        const profileImg = document.getElementById("profileDropdown");
+        if (data.data.profileImage && data.data.profileImage.buffer) {
+          const base64String = arrayBufferToBase64(
+            data.data.profileImage.buffer.data
           );
-          hideLoader();
-          if (!response.ok) {
-            throw new Error("Token validation failed");
-          }
+          const mimeType = data.data.profileImage.contentType;
+          profileImg.src = `data:${mimeType};base64,${base64String}`;
+        } else {
+          console.log("Using default profile image");
+        }
+        if (!data.valid) {
+          // If token is not valid, redirect to login page
+          window.location.href = "login.html";
+        }
+        const role = data.role;
+        const editConfig = document.getElementById("edit-config");
+        const sendConfig = document.getElementById("send-config");
+        const vapiConfig = document.getElementById("edit-vapi");
 
-          const data = await response.json();
-          const profileImg = document.getElementById("profileDropdown");
-          if (data.data.profileImage && data.data.profileImage.buffer) {
-            console.log("Come");
-            const base64String = arrayBufferToBase64(
-              data.data.profileImage.buffer.data
-            );
-            const mimeType = data.data.profileImage.contentType;
-            profileImg.src = `data:${mimeType};base64,${base64String}`;
-          } else {
-            console.log("Using default profile image");
-          }
-          if (!data.valid) {
-            // If token is not valid, redirect to login page
-            window.location.href = "login.html";
-          }
-          const role = data.role;
-          const editConfig = document.getElementById("edit-config");
-          const sendConfig = document.getElementById("send-config");
-          const vapiConfig = document.getElementById("edit-vapi");
+        if (role === "super_admin") {
+          vapiConfig.style.display = "block";
+        }
+        if (role === "admin") {
 
-if (role === "super_admin") {
-    vapiConfig.style.display = "block";
-}
-          if (role === "admin") {
-            
-          }
-          if (role === "admin" || role === "super_admin") {
-            document.getElementById("admin-super_admin").style.display =
-              "block";
-              sendConfig.style.display = "block";
-            editConfig.style.display = "block";
-          }
-          //console.log(role);
-          if (
-            role === "admin" ||
-            role === "subuser" ||
-            role === "super_admin"
-          ) {
-            document.getElementById("admin-subuser-features").style.display =
-              "block";
-          }
+        }
+        if (role === "admin" || role === "super_admin") {
+          document.getElementById("admin-super_admin").style.display =
+            "block";
+          sendConfig.style.display = "block";
+          editConfig.style.display = "block";
+        }
+        if (
+          role === "admin" ||
+          role === "subuser" ||
+          role === "super_admin"
+        ) {
+          document.getElementById("admin-subuser-features").style.display =
+            "block";
+        }
 
-          if (
-            role === "super_admin" ||
-            role === "admin" ||
-            role === "subuser"
-          ) {
-            document.getElementById("admin-subuser-features").style.display =
-              "block";
-            document.getElementById("bulk-email-sms").style.display = "block";
-          }
+        if (
+          role === "super_admin" ||
+          role === "admin" ||
+          role === "subuser"
+        ) {
+          document.getElementById("admin-subuser-features").style.display =
+            "block";
+          document.getElementById("bulk-email-sms").style.display = "block";
+        }
 
-          if (
-            role === "admin" ||
-            role === "subuser" ||
-            role === "super_admin"
-          ) {
-            const dropdownMenu = document.getElementById("dropdownMenu");
+        if (
+          role === "admin" ||
+          role === "subuser" ||
+          role === "super_admin"
+        ) {
+          const dropdownMenu = document.getElementById("dropdownMenu");
 
-            const adminItems = `
+          const adminItems = `
           
           `;
 
-            // Insert admin items before the logout button
-            dropdownMenu.insertAdjacentHTML("beforeend", adminItems);
-          }
+          // Insert admin items before the logout button
+          dropdownMenu.insertAdjacentHTML("beforeend", adminItems);
+        }
 
-          if (role === "admin") {
-            const dropdownMenu = document.getElementById("dropdownMenu");
+        if (role === "admin") {
+          const dropdownMenu = document.getElementById("dropdownMenu");
 
-            const adminItems = `
+          const adminItems = `
              <li>
               <a class="dropdown-item" href="add-member.html">
                 <i class="fa-solid fa-comments"></i> Add Member
@@ -453,14 +408,14 @@ if (role === "super_admin") {
             </li>
           `;
 
-            // Insert admin items before the logout button
-            dropdownMenu.insertAdjacentHTML("beforeend", adminItems);
-          }
+          // Insert admin items before the logout button
+          dropdownMenu.insertAdjacentHTML("beforeend", adminItems);
+        }
 
-          if (role === "admin" || role === "user") {
-            const dropdownMenu = document.getElementById("dropdownMenu");
+        if (role === "admin" || role === "user") {
+          const dropdownMenu = document.getElementById("dropdownMenu");
 
-            const adminItems = `
+          const adminItems = `
       <li>
       <a class="dropdown-item" href="buy-membership.html">
       <i class="fa-solid fa-credit-card"></i> Buy Membership
@@ -481,375 +436,344 @@ if (role === "super_admin") {
       </li>
       `;
 
-            // Insert admin items before the logout button
-            dropdownMenu.insertAdjacentHTML("beforeend", adminItems);
-          }
-        } catch (error) {
-          console.error("Error validating token:", error);
-          // Redirect to login if there's an error
-          window.location.href = "login.html";
+          // Insert admin items before the logout button
+          dropdownMenu.insertAdjacentHTML("beforeend", adminItems);
         }
+      } catch (error) {
+        console.error("Error validating token:", error);
+        // Redirect to login if there's an error
+        window.location.href = "login.html";
       }
+    }
 
-      // Call the validateToken function when the page loads
-      window.onload = validateToken;
+    // Call the validateToken function when the page loads
+    window.onload = validateToken;
 
-      const options = {
-        method: "GET",
-        headers: {
-          Authorization: "Bearer 22576079-730d-4707-b8ab-f780113249f3",
-        },
-      };
+    const options = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer 22576079-730d-4707-b8ab-f780113249f3",
+      },
+    };
 
-      async function processTranscriptWithOpenAI(transcript) {
+    async function processTranscriptWithOpenAI(transcript) {
+      const response = await fetch(
+        `${url}/api/process-transcript`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ transcript }),
+        }
+      );
+      const data = await response.json();
+      return data;
+    }
+
+    async function updateCallLogs() {
+      try {
         const response = await fetch(
-           `${url}/api/process-transcript`,
+          `${url}/api/auth/get-call-data-all`,
           {
-            method: "POST",
+            method: "GET",
             headers: {
-              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-            body: JSON.stringify({ transcript }),
           }
         );
+
         const data = await response.json();
-        return data;
-      }
 
-      async function updateCallLogs() {
-        console.log("Checking for new call logs...");
-        try {
-          const response = await fetch(
-             `${url}/api/auth/get-call-data-all`,
-            {
-              method: "GET",
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
-          );
+        const tableBody = document.querySelector("#call-logs-table tbody");
+        tableBody.innerHTML = "";
 
-          const data = await response.json();
-          console.log(`Found ${data.latestCalls.length} call logs to process`);
+        // Process calls in parallel using Promise.all
+        const processPromises = data.latestCalls.map(async (call) => {
+          if (
+            call.status === "completed" &&
+            !call.analyzed &&
+            call.transcript
+          ) {
+            try {
+              const isInterested = await analyzeTranscript(call.transcript);
 
-          const tableBody = document.querySelector("#call-logs-table tbody");
-          tableBody.innerHTML = "";
-
-          // Process calls in parallel using Promise.all
-          const processPromises = data.latestCalls.map(async (call) => {
-            if (
-              call.status === "completed" &&
-              !call.analyzed &&
-              call.transcript
-            ) {
-              console.log(`Processing call ${call.sid}...`);
-              try {
-                console.log(`Analyzing transcript for call ${call.sid}`);
-                const isInterested = await analyzeTranscript(call.transcript);
-                console.log(
-                  `Call ${call.sid} analysis result: ${
-                    isInterested ? "Interested" : "Not interested"
-                  }`
-                );
-
-                if (isInterested) {
-                  const userDetails = {
-                    name: call.userName || "Unknown",
-                    phone: call.to || "N/A",
-                  };
-                  console.log(
-                    `User showed interest - sending admin notification for: ${userDetails.name}`
-                  );
-                  await sendEmailToAdmin(userDetails);
-                }
-
-                // Mark call as analyzed
-                await fetch(
-                   `${url}/api/auth/mark-call-analyzed`,
-                  {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                      Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                    body: JSON.stringify({ callSid: call.sid }),
-                  }
-                );
-                console.log(`Call ${call.sid} marked as analyzed`);
-              } catch (error) {
-                console.error(`Error processing call ${call.sid}:`, error);
+              if (isInterested) {
+                const userDetails = {
+                  name: call.userName || "Unknown",
+                  phone: call.to || "N/A",
+                };
+                await sendEmailToAdmin(userDetails);
               }
-            }
 
-            // Create table row
-            const row = document.createElement("tr");
-            row.setAttribute("data-sid", call.sid);
-            row.innerHTML = `
+              // Mark call as analyzed
+              await fetch(
+                `${url}/api/auth/mark-call-analyzed`,
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                  },
+                  body: JSON.stringify({ callSid: call.sid }),
+                }
+              );
+            } catch (error) {
+              console.error(`Error processing call ${call.sid}:`, error);
+            }
+          }
+
+          // Create table row
+          const row = document.createElement("tr");
+          row.setAttribute("data-sid", call.sid);
+          row.innerHTML = `
               <td>${new Date(call.dateCreated).toLocaleString()}</td>
               <td>${new Date(call.endTime).toLocaleString()}</td>
               <td>${call.status}</td>
               <td>${call.to || "N/A"}</td>
               <td>
-                <button class="btn btn-primary btn-sm show-transcript" data-transcript="${
-                  call.transcript || "N/A"
-                }">
+                <button class="btn btn-primary btn-sm show-transcript" data-transcript="${call.transcript || "N/A"
+            }">
                   Show Transcript
                 </button>
               </td>
               <td>
-                <button class="btn btn-info btn-sm show-summary" data-summary="${
-                  call.analysis?.summary || "N/A"
-                }">
+                <button class="btn btn-info btn-sm show-summary" data-summary="${call.analysis?.summary || "N/A"
+            }">
                   Show Summary
                 </button>
               </td>
             `;
-            return row;
-          });
-
-          // Wait for all calls to be processed
-          const rows = await Promise.all(processPromises);
-          rows.forEach((row) => tableBody.appendChild(row));
-
-          // Re-add event listeners for the modal
-          addModalEventListeners();
-          console.log("Call log processing completed");
-        } catch (error) {
-          console.error("Error updating call logs:", error);
-        }
-      }
-
-      function addModalEventListeners() {
-        document.querySelectorAll(".show-transcript").forEach((button) => {
-          button.addEventListener("click", async (event) => {
-            const callSid = event.target.closest("tr").getAttribute("data-sid");
-            console.log(callSid);
-            await fetchDataAndDisplayModal(callSid, "Transcript", "transcript");
-          });
+          return row;
         });
 
-        document.querySelectorAll(".show-summary").forEach((button) => {
-          button.addEventListener("click", async (event) => {
-            const callSid = event.target.closest("tr").getAttribute("data-sid");
-            await fetchDataAndDisplayModal(callSid, "Summary", "summary");
-          });
+        // Wait for all calls to be processed
+        const rows = await Promise.all(processPromises);
+        rows.forEach((row) => tableBody.appendChild(row));
+
+        // Re-add event listeners for the modal
+        addModalEventListeners();
+      } catch (error) {
+        console.error("Error updating call logs:", error);
+      }
+    }
+
+    function addModalEventListeners() {
+      document.querySelectorAll(".show-transcript").forEach((button) => {
+        button.addEventListener("click", async (event) => {
+          const callSid = event.target.closest("tr").getAttribute("data-sid");
+          await fetchDataAndDisplayModal(callSid, "Transcript", "transcript");
         });
-      }
-
-      async function fetchDataAndDisplayModal(callSid, title, field) {
-        try {
-          showLoader();
-          const response = await fetch(
-             `${url}/api/auth/transcript`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-              body: JSON.stringify({ callSid }),
-            }
-          );
-
-          const data = await response.json();
-          console.log(data);
-          hideLoader();
-          if (response.ok) {
-            document.getElementById("modalTitle").textContent = title;
-
-            // Format transcript for display
-            if (field === "transcript" && data.transcript) {
-              const formattedTranscript = formatTranscript(data.transcript);
-              document.getElementById("modalContent").innerHTML =
-                formattedTranscript;
-            } else {
-              document.getElementById("modalContent").textContent =
-                data[field] || `${title} not available`;
-            }
-
-            openModal();
-          } else {
-            alert(data.error || `Failed to fetch ${title.toLowerCase()}`);
-          }
-        } catch (error) {
-          console.error(`Error fetching ${title.toLowerCase()}:`, error);
-          alert(`Failed to fetch ${title.toLowerCase()}`);
-        }
-      }
-
-      // Helper function to format the transcript
-      function formatTranscript(transcript) {
-        return transcript
-          .split("\n") // Split by line breaks
-          .map((line) => {
-            // Check if the line contains a speaker and add line breaks between different speakers
-            if (line.startsWith("User:")) {
-              return `<strong>User:</strong> ${line
-                .replace("User:", "")
-                .trim()}`;
-            } else if (line.startsWith("AI:")) {
-              return `<strong>AI:</strong> ${line.replace("AI:", "").trim()}`;
-            } else {
-              return line;
-            }
-          })
-          .join("<br>"); // Rejoin with line breaks for HTML display
-      }
-
-      function openModal() {
-        const modal = document.getElementById("myModal");
-        modal.style.display = "block";
-      }
-
-      function closeModal() {
-        const modal = document.getElementById("myModal");
-        modal.style.display = "none";
-      }
-
-      document.querySelector(".close").addEventListener("click", closeModal);
-
-      // Close modal when clicking outside the modal content
-      window.addEventListener("click", (event) => {
-        const modal = document.getElementById("myModal");
-        if (event.target === modal) closeModal();
       });
-      updateCallLogs();
-      setInterval(updateCallLogs, 30000); // Check every 30 seconds
 
-      async function fetchAndAnalyzeTranscripts() {
-        try {
-          console.log("Come hereeee")
-          const response = await fetch(
-          `${url}/api/auth/transcript-all`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-              body: JSON.stringify({}),
-            }
-          );
+      document.querySelectorAll(".show-summary").forEach((button) => {
+        button.addEventListener("click", async (event) => {
+          const callSid = event.target.closest("tr").getAttribute("data-sid");
+          await fetchDataAndDisplayModal(callSid, "Summary", "summary");
+        });
+      });
+    }
 
-          const data = await response.json();
-          console.log("Fetched Transcripts:", data);
-
-          if (!Array.isArray(data.transcripts)) {
-            console.error("Invalid transcripts data format");
-            return;
-          }
-
-          for (const transcriptData of data.transcripts) {
-            const transcript = transcriptData.transcript;
-            const result = await analyzeTranscript(transcript);
-            console.log(
-              `Transcript Analysis Result: ${
-                result ? "Interested" : "Not Interested"
-              }`
-            );
-          }
-        } catch (error) {
-          console.error("Error fetching and analyzing transcripts:", error);
-        }
-      }
-
-      // Analyze individual transcript using Gemini AI
-      async function analyzeTranscript(transcript) {
-        try {
-          console.log(transcript)
-          const response = await fetch(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "x-goog-api-key": "AIzaSyC69aKaZ_3alRkaN1wOV3YFKK9ZFn8yxVE",
-              },
-              body: JSON.stringify({
-                contents: [
-                  {
-                    parts: [
-                      {
-                        text: `Analyze this call transcript and determine if the user shows interest in buying or discussing services further. Respond with ONLY 'yes' or 'no', nothing else:\n\n${transcript}`,
-                      },
-                    ],
-                  },
-                ],
-              }),
-            }
-          );
-
-          if (!response.ok) {
-            throw new Error(`Gemini API error: ${response.statusText}`);
-          }
-
-          const data = await response.json();
-          console.log("Gemini response:", data);
-
-          const answer = data.candidates[0].content.parts[0].text
-            .trim()
-            .toLowerCase();
-            const user = {
-              name:"Arijit",
-              phone:"1234"
-            }
-            console.log(answer)
-          if(answer === "yes")
+    async function fetchDataAndDisplayModal(callSid, title, field) {
+      try {
+        showLoader();
+        const response = await fetch(
+          `${url}/api/auth/transcript`,
           {
-            sendEmailToAdmin(user)
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify({ callSid }),
           }
-        } catch (error) {
-          console.error("Error analyzing transcript with Gemini:", error);
-          return false;
-        }
-      }
-      function sendEmailToAdmin(userDetails) {
-        // Get the token from local storage
-        const token = localStorage.getItem("token");
+        );
 
-        if (!token) {
-          console.error("User not authenticated. Token is missing.");
+        const data = await response.json();
+        hideLoader();
+        if (response.ok) {
+          document.getElementById("modalTitle").textContent = title;
+
+          // Format transcript for display
+          if (field === "transcript" && data.transcript) {
+            const formattedTranscript = formatTranscript(data.transcript);
+            document.getElementById("modalContent").innerHTML =
+              formattedTranscript;
+          } else {
+            document.getElementById("modalContent").textContent =
+              data[field] || `${title} not available`;
+          }
+
+          openModal();
+        } else {
+          
+          alert(data.error || `Failed to fetch ${title.toLowerCase()}`);
+        }
+      } catch (error) {
+        console.error(`Error fetching ${title.toLowerCase()}:`, error);
+        alert(`Failed to fetch ${title.toLowerCase()}`);
+      }
+    }
+
+    // Helper function to format the transcript
+    function formatTranscript(transcript) {
+      return transcript
+        .split("\n") // Split by line breaks
+        .map((line) => {
+          // Check if the line contains a speaker and add line breaks between different speakers
+          if (line.startsWith("User:")) {
+            return `<strong>User:</strong> ${line
+              .replace("User:", "")
+              .trim()}`;
+          } else if (line.startsWith("AI:")) {
+            return `<strong>AI:</strong> ${line.replace("AI:", "").trim()}`;
+          } else {
+            return line;
+          }
+        })
+        .join("<br>"); // Rejoin with line breaks for HTML display
+    }
+
+    function openModal() {
+      const modal = document.getElementById("myModal");
+      modal.style.display = "block";
+    }
+
+    function closeModal() {
+      const modal = document.getElementById("myModal");
+      modal.style.display = "none";
+    }
+
+    document.querySelector(".close").addEventListener("click", closeModal);
+
+    // Close modal when clicking outside the modal content
+    window.addEventListener("click", (event) => {
+      const modal = document.getElementById("myModal");
+      if (event.target === modal) closeModal();
+    });
+    updateCallLogs();
+    setInterval(updateCallLogs, 30000); // Check every 30 seconds
+
+    async function fetchAndAnalyzeTranscripts() {
+      try {
+        const response = await fetch(
+          `${url}/api/auth/transcript-all`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify({}),
+          }
+        );
+
+        const data = await response.json();
+
+        if (!Array.isArray(data.transcripts)) {
+          console.error("Invalid transcripts data format");
           return;
         }
 
-        const emailContent = `
+        for (const transcriptData of data.transcripts) {
+          const transcript = transcriptData.transcript;
+          const result = await analyzeTranscript(transcript);
+        }
+      } catch (error) {
+        console.error("Error fetching and analyzing transcripts:", error);
+      }
+    }
+
+    // Analyze individual transcript using Gemini AI
+    async function analyzeTranscript(transcript) {
+      try {
+        const response = await fetch(
+          "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-goog-api-key": "AIzaSyC69aKaZ_3alRkaN1wOV3YFKK9ZFn8yxVE",
+            },
+            body: JSON.stringify({
+              contents: [
+                {
+                  parts: [
+                    {
+                      text: `Analyze this call transcript and determine if the user shows interest in buying or discussing services further. Respond with ONLY 'yes' or 'no', nothing else:\n\n${transcript}`,
+                    },
+                  ],
+                },
+              ],
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Gemini API error: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        const answer = data.candidates[0].content.parts[0].text
+          .trim()
+          .toLowerCase();
+        const user = {
+          name: "Arijit",
+          phone: "1234"
+        }
+
+        if (answer === "yes") {
+          sendEmailToAdmin(user)
+        }
+      } catch (error) {
+        console.error("Error analyzing transcript with Gemini:", error);
+        return false;
+      }
+    }
+    function sendEmailToAdmin(userDetails) {
+      // Get the token from local storage
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        console.error("User not authenticated. Token is missing.");
+        return;
+      }
+
+      const emailContent = `
     User is interested in buying a service.
     Name: ${userDetails.name}
     Phone Number: ${userDetails.phone}
   `;
 
-        // Send request to server with token included in headers
-        fetch( `${url}/api/send-email-property`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            subject: "Interested User Alert",
-            message: emailContent,
-          }),
+      // Send request to server with token included in headers
+      fetch(`${url}/api/send-email-property`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          subject: "Interested User Alert",
+          message: emailContent,
+        }),
+      })
+        .then((response) => {
+          if (response.ok) {
+          } else if (response.status === 401) {
+            console.error("Unauthorized request. Please verify the token.");
+          } else {
+            console.error("Failed to send email to admin.");
+          }
         })
-          .then((response) => {
-            if (response.ok) {
-              console.log("Email sent successfully to admin.");
-            } else if (response.status === 401) {
-              console.error("Unauthorized request. Please verify the token.");
-            } else {
-              console.error("Failed to send email to admin.");
-            }
-          })
-          .catch((error) => {
-            console.error("Error while sending email to admin:", error);
-          });
-      }
+        .catch((error) => {
+          console.error("Error while sending email to admin:", error);
+        });
+    }
 
-      async function testTranscriptAnalysis() {
-        try {
-          console.log("Starting transcript analysis test...");
-
-          // Sample transcript showing interest
-          const interestedTranscript = `
+    async function testTranscriptAnalysis() {
+      try {
+        const interestedTranscript = `
             User: Hi, I'm interested in learning more about your services.
             AI: Hello! I'd be happy to tell you about our services. We offer AI-powered calling solutions.
             User: That sounds exactly what I need. How much does it cost?
@@ -857,39 +781,35 @@ if (role === "super_admin") {
             User: Yes, I'd definitely like to know more. Can someone contact me about this?
             AI: Absolutely! I'll make sure our team reaches out to you soon.
           `;
+        const interestedResult = await analyzeTranscript(
+          interestedTranscript
+        );
 
-          console.log("Analyzing interested transcript...");
-          const interestedResult = await analyzeTranscript(
-            interestedTranscript
-          );
-          console.log("Interest detected:", interestedResult);
+        if (interestedResult) {
+          const testUserDetails = {
+            name: "Test User",
+            phone: "+1234567890",
+          };
 
-          if (interestedResult) {
-            console.log("Testing email notification...");
-            const testUserDetails = {
-              name: "Test User",
-              phone: "+1234567890",
-            };
-
-            try {
-              const emailResult = await sendEmailToAdmin(testUserDetails);
-              console.log("Email notification result:", emailResult);
-            } catch (emailError) {
-              console.error("Email test failed:", emailError);
-              alert("Email test failed: " + emailError.message);
-            }
+          try {
+            const emailResult = await sendEmailToAdmin(testUserDetails);
+          } catch (emailError) {
+            console.error("Email test failed:", emailError);
+            alert("Email test failed: " + emailError.message);
           }
-        } catch (error) {
-          console.error("Test failed:", error);
-          alert("Test failed: " + error.message);
         }
+      } catch (error) {
+        console.error("Test failed:", error);
+        alert("Test failed: " + error.message);
       }
+    }
 
-      // Add a test button to the UI
-      const testButton = document.createElement("button");
-      testButton.className = "btn btn-primary m-3";
-      testButton.onclick = fetchAndAnalyzeTranscripts;
-      document.querySelector(".page-title").appendChild(testButton);
-    </script>
-  </body>
+    // Add a test button to the UI
+    const testButton = document.createElement("button");
+    testButton.className = "btn btn-primary m-3";
+    testButton.onclick = fetchAndAnalyzeTranscripts;
+    document.querySelector(".page-title").appendChild(testButton);
+  </script>
+</body>
+
 </html>

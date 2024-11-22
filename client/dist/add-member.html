@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add Member</title>
+    <title>AiEngage</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap"
@@ -353,15 +353,11 @@
     <script src="assets/js/bootstrap.bundle.min.js"></script>
     <script src="assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="assets/js/bootstrap.bundle.min.js"></script>
-
-    <script src="assets/vendors/apexcharts/apexcharts.js"></script>
     <script src="assets/js/pages/dashboard.js"></script>
 
     <script src="assets/js/main.js"></script>
     <script src="assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="assets/js/bootstrap.bundle.min.js"></script>
-
-    <script src="assets/vendors/apexcharts/apexcharts.js"></script>
     <script src="assets/js/pages/dashboard.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -425,7 +421,6 @@
               })
               .catch((error) => {
                 hideLoader();
-                console.log(error);
                 Swal.fire({
                   icon: "error",
                   text: error.message,
@@ -482,8 +477,6 @@
             window.location.href = "login.html";
           }
           const role = data.role;
-         
-          //console.log(role);
           const editConfig = document.getElementById("edit-config");
           const sendConfig = document.getElementById("send-config");
           const vapiConfig = document.getElementById("edit-vapi");
@@ -573,7 +566,6 @@ margin-right: auto;
             dropdownMenu.insertAdjacentHTML("beforeend", adminItems);
           }
         } catch (error) {
-          console.error("Error validating token:", error);
           window.location.href = "login.html";
         }
       }

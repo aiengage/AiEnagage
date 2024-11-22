@@ -15,14 +15,12 @@ const sgMail = require("@sendgrid/mail");
 
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
-  console.log(token);
   if (!token) {
     return res.status(401).json({ message: "Access denied" });
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(decoded);
     req.userId = decoded.userId;
     req.role = decoded.role; // Attach the role (admin/subuser) if needed
     next();
@@ -35,10 +33,8 @@ const verifyToken = (req, res, next) => {
 router.post("/demo-transcript", async (req, res) => {
   try {
     const demoTranscript = req.body.transcript;
-    console.log(demoTranscript);
 
     const extractedInfo = await openaiService.processTranscript(demoTranscript);
-    console.log("Extracted info from OpenAI:", extractedInfo);
 
     const newCallLog = new CallLog({
       createdAt: new Date(),
@@ -106,11 +102,6 @@ router.post("/send-emails", verifyToken, async (req, res) => {
       fromEmail = user.sendGridEmail;
       sgMail.setApiKey(user.sendGridApiKey);
     } 
-
-    // Calculate total emails to be sent
-    // Assuming each email costs 1 credit
-
-    // Check if the user has enough credits to send the emails
     if (user.credits < totalCost) {
       return res
         .status(403)
@@ -171,7 +162,6 @@ async function sendEmail(to, subject, text, fromEmail) {
 
   try {
     await sgMail.send(msg);
-    console.log(`Email sent to ${to}`);
     return `Email sent to ${to}`;
   } catch (error) {
     console.error(`Error sending email to ${to}:`, error);
@@ -294,7 +284,6 @@ const verifyTokenSms = async (req, res, next) => {
   }
 };
 router.post("/send-sms-property", verifyTokenSms, async (req, res) => {
-  console.log("Comer")
   const { toNumber, message } = req.body;
 
   // Use Twilio credentials from req.credentials
@@ -357,9 +346,6 @@ const sendgridEmail1 = require("@sendgrid/mail");
 // Route to send email
 router.post("/send-email-property", verifyTokenEmail, async (req, res) => {
   const { subject, message } = req.body;
-
-  console.log(req)
-  console.log("Come")
   try {
     // Initialize SendGrid with the API key from the authenticated user
     sendgridEmail1.setApiKey(req.sendGridApiKey);

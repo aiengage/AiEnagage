@@ -43,6 +43,7 @@
         padding: 15px;
         width: 100%;
       }
+
       .profile-img {
         width: 40px;
         height: 40px;
@@ -59,13 +60,15 @@
         min-width: 150px;
         text-align: center;
       }
+
       .dropdown-item {
         display: flex;
         align-items: center;
       }
 
       .dropdown-item i {
-        margin-right: 8px; /* Adds space between the icon and text */
+        margin-right: 8px;
+        /* Adds space between the icon and text */
       }
 
       .dropdown-divider {
@@ -77,6 +80,7 @@
         margin-left: auto;
         margin-right: auto;
       }
+
       .table-container {
         margin: 20px;
         padding: 20px;
@@ -84,12 +88,15 @@
         border-radius: 8px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
+
       .table-responsive {
         overflow-x: auto;
       }
+
       .table thead {
         background-color: #f1f1f1;
       }
+
       .table th,
       .table td {
         vertical-align: middle;
@@ -97,6 +104,7 @@
       }
     </style>
   </head>
+
   <body>
     <div id="app">
       <div id="sidebar" class="active">
@@ -104,14 +112,13 @@
           <div class="sidebar-header">
             <div class="d-flex justify-content-between">
               <div class="logo">
-                <a href="index.html"
-                  >
-                  <img 
-                  src="assets/images/logo/logo.png" 
-                  alt="Logo" 
-                  srcset="" 
-                  class="logo1" 
-                  style="width: 150px; height: auto;"
+                <a href="index.html">
+                  <img
+                    src="assets/images/logo/logo.png"
+                    alt="Logo"
+                    srcset=""
+                    class="logo1"
+                    style="width: 150px; height: auto"
                 /></a>
               </div>
               <div class="toggler">
@@ -155,7 +162,7 @@
               </div>
 
               <div id="admin-super_admin" style="display: none">
-                <li class="sidebar-item">
+                <li class="sidebar-item active">
                   <a href="users.html" class="sidebar-link">
                     <i class="bi bi-envelope-fill"></i>
                     <span>Users</span>
@@ -167,13 +174,13 @@
                     <span>Appointment</span>
                   </a>
                 </li>
-                <li class="sidebar-item" style="display: none;" id="edit-config">
+                <li class="sidebar-item" style="display: none" id="edit-config">
                   <a href="Edit-Config.html" class="sidebar-link">
                     <i class="bi bi-calendar-check-fill"></i>
                     <span>Connect Twilio</span>
                   </a>
                 </li>
-                <li class="sidebar-item" style="display: none;" id="edit-vapi">
+                <li class="sidebar-item" style="display: none" id="edit-vapi">
                   <a href="vapiConfig.html" class="sidebar-link">
                     <i class="bi bi-calendar-check-fill"></i>
                     <span>Add Vapi</span>
@@ -195,9 +202,7 @@
                   </li>
                 </div>
 
-                
-
-                <li class="sidebar-item" style="display: none;" id="send-config">
+                <li class="sidebar-item" style="display: none" id="send-config">
                   <a href="sendgrid-config.html" class="sidebar-link">
                     <i class="bi bi-calendar-check-fill"></i>
                     <span>Connect SendGrid</span>
@@ -299,8 +304,6 @@
 
   <script src="assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
   <script src="assets/js/bootstrap.bundle.min.js"></script>
-
-  <script src="assets/vendors/apexcharts/apexcharts.js"></script>
   <script src="assets/js/pages/dashboard.js"></script>
   <script src="loader.js"></script>
   <script src="assets/js/main.js"></script>
@@ -323,16 +326,13 @@
       }
       showLoader();
       try {
-        const response = await fetch(
-          `${url}/api/auth/validate`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`${url}/api/auth/validate`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
         hideLoader();
         if (!response.ok) {
           throw new Error("Token validation failed");
@@ -344,35 +344,26 @@
           window.location.href = "login.html";
         }
 
-        console.log(data);
-
         const role = data.role;
 
-            const profileImg = document.getElementById("profileDropdown");
-          if (data.data.profileImage && data.data.profileImage.buffer) {
+        const profileImg = document.getElementById("profileDropdown");
+        if (data.data.profileImage && data.data.profileImage.buffer) {
+          const base64String = arrayBufferToBase64(
+            data.data.profileImage.buffer.data
+          );
+          const mimeType = data.data.profileImage.contentType;
+          profileImg.src = `data:${mimeType};base64,${base64String}`;
+        } else {
+          console.log("Using default profile image");
+        }
 
-            console.log("Come")
-             const base64String = arrayBufferToBase64(
-              data.data.profileImage.buffer.data
-             );
-            const mimeType = data.data.profileImage.contentType;
-            profileImg.src = `data:${mimeType};base64,${base64String}`;
-          } else {
-            console.log("Using default profile image");
-         }
-
-        //console.log(role);
         const editConfig = document.getElementById("edit-config");
         const sendConfig = document.getElementById("send-config");
         const vapiConfig = document.getElementById("edit-vapi");
 
-if (role === "super_admin") {
-    vapiConfig.style.display = "block";
-}
-          if(role === "admin")
-          {
-             
-          }
+        if (role === "super_admin") {
+          vapiConfig.style.display = "block";
+        }
 
         if (role === "admin") {
           fetchAllUsers(localStorage.getItem("token"));
@@ -384,15 +375,15 @@ if (role === "super_admin") {
 
         if (role === "admin" || role === "super_admin") {
           document.getElementById("admin-super_admin").style.display = "block";
-            editConfig.style.display="block"
-                sendConfig.style.display="block"
+          editConfig.style.display = "block";
+          sendConfig.style.display = "block";
         }
 
         if (role === "super_admin" || role === "admin" || role === "subuser") {
-  document.getElementById("admin-subuser-features").style.display = "block";
-  document.getElementById("bulk-email-sms").style.display = "block"; 
-}
-
+          document.getElementById("admin-subuser-features").style.display =
+            "block";
+          document.getElementById("bulk-email-sms").style.display = "block";
+        }
 
         if (role === "admin" || role === "subuser" || role === "super_admin") {
           const dropdownMenu = document.getElementById("dropdownMenu");
@@ -466,23 +457,19 @@ margin-right: auto;
 
     async function fetchAllUsers(token) {
       try {
-        const response = await fetch(
-           `${url}/api/auth/users`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`${url}/api/auth/users`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!response.ok) {
           throw new Error("Failed to fetch users");
         }
 
         const data = await response.json();
-        console.log("All users with sub-users:", data);
 
         const userTableBody = document.getElementById("userTableBody");
         userTableBody.innerHTML = ""; // Clear the table body
@@ -498,7 +485,7 @@ margin-right: auto;
           <td>${subUser.email || "No email found"}</td>
           <td>${subUser.phone || "No phone found"}</td>
           <td>${subUser.credit || "No credit available"}</td>
-          <td>${subUser.totalCredit-subUser.credit || "No credit used"}</td>
+          <td>${subUser.totalCredit - subUser.credit || "No credit used"}</td>
           <td>${subUser.role || "User"}</td>
           <td><button class="delete-btn" data-id="${
             subUser._id
@@ -528,55 +515,41 @@ margin-right: auto;
 
     async function deleteSubUser(subUserId, token) {
       try {
-        const response = await fetch(
-        `${url}/api/auth/subuser/${subUserId}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`${url}/api/auth/subuser/${subUserId}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!response.ok) {
           throw new Error("Failed to delete sub-user");
         }
-
-        console.log("Sub-user deleted successfully");
-        // Refresh the list of users after deletion
         fetchAllUsers(token);
       } catch (error) {
         console.error("Error deleting sub-user:", error);
       }
     }
 
-
-
-
-
-      function arrayBufferToBase64(buffer) {
-        let binary = "";
-        const bytes = new Uint8Array(buffer);
-        bytes.forEach((b) => (binary += String.fromCharCode(b)));
-        return window.btoa(binary);
-      }
-
+    function arrayBufferToBase64(buffer) {
+      let binary = "";
+      const bytes = new Uint8Array(buffer);
+      bytes.forEach((b) => (binary += String.fromCharCode(b)));
+      return window.btoa(binary);
+    }
 
     async function fetchAllAdmins(token) {
       try {
         document.getElementById("action-tag-super_admin").style.display =
           "none";
-        const response = await fetch(
-           `${url}/api/auth/admins`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`${url}/api/auth/admins`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!response.ok) {
           if (response.status === 401) {
@@ -586,14 +559,7 @@ margin-right: auto;
           }
           throw new Error("Failed to fetch admins");
         }
-
         const data = await response.json();
-
-            console.log(data.admins)
-
-
-        console.log("All admin users with sub-users:", data);
-
         const userTableBody = document.getElementById("userTableBody");
         userTableBody.innerHTML = ""; // Clear the table body
 

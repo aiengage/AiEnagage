@@ -522,13 +522,6 @@ button:hover {
         localStorage.removeItem("token");
         window.location.href = "login.html";
       });
-
-      
-
-
-
-
-
       function arrayBufferToBase64(buffer) {
         let binary = "";
         const bytes = new Uint8Array(buffer);
@@ -563,8 +556,6 @@ button:hover {
           const data = await response.json();
           const profileImg = document.getElementById("profileDropdown");
           if (data.data.profileImage && data.data.profileImage.buffer) {
-
-            console.log("Come")
              const base64String = arrayBufferToBase64(
               data.data.profileImage.buffer.data
              );
@@ -573,8 +564,6 @@ button:hover {
           } else {
             console.log("Using default profile image");
          }
-
-          console.log(data.data.role)
           const userEmail = data.data.email;
           document.getElementById("userEmailPlatinum").value = userEmail;
     document.getElementById("userEmailGold").value = userEmail;
@@ -605,7 +594,6 @@ if (role === "super_admin") {
               editConfig.style.display="block"
                sendConfig.style.display="block"
           }
-console.log(role);
 if (role === "admin" || role === "subuser" ||  role === "super_admin") {
     document.getElementById("admin-subuser-features").style.display = "block";
   }
@@ -669,13 +657,8 @@ margin-right: auto;
 
             // Insert admin items before the logout button
             dropdownMenu.insertAdjacentHTML("beforeend", adminItems);
-          }
-       
-       
-     
-       
+          } 
         } catch (error) {
-          console.error("Error validating token:", error);
           window.location.href = "login.html";
         }
       }
@@ -754,7 +737,6 @@ margin-right: auto;
         }
       })
       .catch((error) => {
-        console.error("Error creating payment session:", error);
         alert("An error occurred. Please try again.");
       });
     };

@@ -20,7 +20,6 @@ const sendEmailWithRetry = async (msg, retries = 3) => {
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       await sgMail.send(msg);
-      console.log(`Email sent to ${msg.to}`);
       return;
     } catch (error) {
       console.error(`Attempt ${attempt} - Failed to send email to ${msg.to}:`, error.response ? error.response.body : error.message);
@@ -77,12 +76,6 @@ const sendEmail = async (to, subject, { plan, amount, customMessage }) => {
 
   await sendEmailWithRetry(msg);
 
-  // try {
-  //   const response = await sgMail.send(msg);
-  //   console.log(`Email sent to ${to}`, response); 
-  // } catch (error) {
-  //   console.error("Failed to send email:", error.response ? error.response.body : error.message);
-  // }
 };
 
 // Route for manual payment
@@ -185,8 +178,7 @@ router.get("/failed", (req, res) => {
 });
 
 // Schedule cron job for monthly subscription renewal
-cron.schedule("0 0 1 * *", async () => {
-  console.log("Running monthly subscription check");
+cron.schedule("0 0 * * *", async () => {
 
   try {
     const users = await User.find({ "lastPlan.plan": { $exists: true } });
@@ -209,8 +201,6 @@ cron.schedule("0 0 1 * *", async () => {
         success_url: `https://aienagage.onrender.com/api/auth/success/${user.email}/${plan}/${amount}`,
         cancel_url: "https://aienagage.onrender.com/api/auth/failed",
       });
-
-      console.log(`Created session for user ${user.email}: ${session.id}`);
 
       await sendEmail(user.email, "Subscription Renewal", {
         plan,

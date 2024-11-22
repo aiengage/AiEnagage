@@ -101,7 +101,10 @@ router.post("/verify-otp", async (req, res) => {
 const verifyAndFetchUser = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
-    if (!token) return res.status(401).json({ message: "Access denied. No token provided." });
+    if (!token)
+      return res
+        .status(401)
+        .json({ message: "Access denied. No token provided." });
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.userId = decoded.userId;
@@ -134,9 +137,6 @@ const verifyAndFetchUser = async (req, res, next) => {
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
-
-  console.log(email);
-  console.log(password);
   try {
     // First check in User collection
     let user = await User.findOne({ email });
@@ -145,7 +145,6 @@ router.post("/login", async (req, res) => {
     if (!user) {
       // If not found, check in SubUser collection
       user = await SubUser.findOne({ email });
-      console.log(user);
       role = "subuser";
 
       if (!user) {
@@ -156,14 +155,9 @@ router.post("/login", async (req, res) => {
       }
     }
 
-    console.log(user);
-
-    console.log(password + "Login");
-
     // Check if the password matches
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      console.log("come");
       res.flash("error", "Invalid username or password");
       return res.status(401).json({ message: "Invalid username or password" });
     }
@@ -281,9 +275,6 @@ router.get("/users", verifyToken, async (req, res) => {
 
 router.post("/update-profile", verifyToken, async (req, res) => {
   const { field, value } = req.body;
-
-  console.log(field);
-  console.log(value);
   try {
     let user = await User.findById(req.userId);
     if (!user) {
@@ -293,15 +284,6 @@ router.post("/update-profile", verifyToken, async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
-    // If the field to update is 'password', hash it first
-    // if (field === "password") {
-    //   console.log("Come");
-    //   const salt = await bcrypt.genSalt(10);
-    //   user.password = await bcrypt.hash(value, salt);
-    // } else {
-    //   user[field] = value;
-    // }
 
     user[field] = value;
     await user.save();
@@ -318,7 +300,9 @@ router.get("/twilio/messages", verifyAndFetchUser, async (req, res) => {
   try {
     const { token, sid } = req.twilioCredentials;
     if (!token || !sid) {
-      return res.status(400).json({ message: "Twilio credentials not configured." });
+      return res
+        .status(400)
+        .json({ message: "Twilio credentials not configured." });
     }
 
     const client = twilio(sid, token);
@@ -346,7 +330,6 @@ router.get("/twilio/messages", verifyAndFetchUser, async (req, res) => {
 
 router.post("/add-subUser", async (req, res) => {
   try {
-    console.log(req.body);
     const { name, email, password, phone, credit } = req.body;
 
     // Check if sub-user with the same email already exists in SubUser
@@ -369,7 +352,6 @@ router.post("/add-subUser", async (req, res) => {
 
     // Get token and verify it
     const token = req.headers.authorization?.split(" ")[1];
-    console.log(token);
     if (!token) {
       res.flash("Authorization token missing");
       return res.status(403).json({ message: "Authorization token missing" });
@@ -382,9 +364,6 @@ router.post("/add-subUser", async (req, res) => {
       res.flash("Invalid or expired token");
       return res.status(401).json({ message: "Invalid or expired token" });
     }
-
-    console.log(decoded);
-    // Find admin user from decoded token
     const adminData = await User.findById(decoded.userId);
     if (!adminData || adminData.role !== "admin") {
       res.flash("No permission to add sub-user");
@@ -420,7 +399,6 @@ router.post("/add-subUser", async (req, res) => {
     await adminData.save();
 
     const resetUrl = `https://www.aiengage.ai/passwordreset.html?token=${resetToken}&email=${newSubUser.email}`;
-    console.log(resetUrl);
     await sendPasswordResetEmail(newSubUser.email, resetUrl);
 
     res
@@ -434,7 +412,7 @@ router.post("/add-subUser", async (req, res) => {
 async function sendPasswordResetEmail(email, resetUrl) {
   const msg = {
     to: email,
-    from: 'choudhardiv@gmail.com', // Your verified sender email in SendGrid
+    from: "choudhardiv@gmail.com", // Your verified sender email in SendGrid
     subject: "Change Your Password",
     html: `
       <p>Please click the following link to change your password:</p>
@@ -445,7 +423,6 @@ async function sendPasswordResetEmail(email, resetUrl) {
 
   try {
     await sgMail.send(msg);
-    console.log("Password reset email sent successfully.");
   } catch (error) {
     console.error("Error sending password reset email:", error);
     throw new Error("Email sending failed");
@@ -589,7 +566,6 @@ router.post("/forgot-password", async (req, res) => {
   }
 });
 
-
 // router.get("/forgot-password/:id/:token", async (req, res) => {
 //   const { id, token } = req.params;
 
@@ -618,7 +594,6 @@ router.post("/forgot-password", async (req, res) => {
 //     return res.status(500).json({ message: "Server error", success: false });
 //   }
 // });
-
 
 router.post("/forgot-password/:id/:token", async (req, res) => {
   const { id, token } = req.params;
@@ -658,9 +633,7 @@ router.post("/forgot-password/:id/:token", async (req, res) => {
     return res.status(200).json({ message: "Password Updated", success: true });
   } catch (error) {
     console.error("Error resetting password:", error);
-    return res
-      .status(500)
-      .json({ message: "Server Error", success: false });
+    return res.status(500).json({ message: "Server Error", success: false });
   }
 });
 
@@ -708,7 +681,6 @@ router.get("/check-credit", verifyToken, async (req, res) => {
     let adminUser;
     // For storing admin details if the role is subuser
 
-
     if (role === "admin") {
       // Find the user directly if they are an admin
       user = await User.findById(userId);
@@ -729,13 +701,11 @@ router.get("/check-credit", verifyToken, async (req, res) => {
       }
       const response = {
         message: "Sufficient credits available",
-        vapiPhoneNumberId:
-          user.vapiPhoneNumberId,
+        vapiPhoneNumberId: user.vapiPhoneNumberId,
         userId: userId,
       };
 
       return res.status(200).json(response);
-
     }
     if (!user || (role === "subuser" && !adminUser)) {
       return res.status(404).json({ message: "User not found" });
@@ -786,8 +756,6 @@ router.get("/update-credit", verifyToken, async (req, res) => {
         credits: user.credits,
       });
     }
-
-    console.log(user)
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -893,14 +861,12 @@ router.post("/check-bulk-credit", verifyToken, async (req, res) => {
         // Retrieve admin's information if subuser has an associated admin
         adminData = await User.findById(user.adminId);
       }
-    }
-    else if (role === "super_admin") {
+    } else if (role === "super_admin") {
       user = await User.findById(userId);
       return res.json({
         message: "Sufficient credits available",
         remainingCredits: availableCredits,
-        vapiPhoneNumberId:
-          user.vapiPhoneNumberId,
+        vapiPhoneNumberId: user.vapiPhoneNumberId,
       });
     }
 
@@ -1037,9 +1003,7 @@ router.post("/updateProfilePic", upload.single("image"), async (req, res) => {
 router.post("/request-demo", verifyToken, async (req, res) => {
   const { timePeriod } = req.body;
   try {
-    console.log(req.userId);
     const user = await User.findById(req.userId);
-    console.log(user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -1072,8 +1036,7 @@ router.post("/config", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const { twilioSid, twilioToken, twilioNum } =
-      req.body;
+    const { twilioSid, twilioToken, twilioNum } = req.body;
     user.twilioSid = twilioSid;
     user.twilioToken = twilioToken;
     user.twilioNum = twilioNum;
@@ -1123,8 +1086,6 @@ router.post("/config", async (req, res) => {
   }
 });
 
-
-
 router.get("/get-twilio-data", verifyToken, async (req, res) => {
   try {
     const { userId, role } = req;
@@ -1134,15 +1095,18 @@ router.get("/get-twilio-data", verifyToken, async (req, res) => {
 
     if (role === "admin") {
       const adminUser = await User.findById(userId);
-      if (!adminUser) return res.status(404).json({ message: "Admin not found" });
+      if (!adminUser)
+        return res.status(404).json({ message: "Admin not found" });
       twilioSid = adminUser.twilioSid;
       twilioToken = adminUser.twilioToken;
     } else if (role === "subuser") {
       const subUser = await SubUser.findById(userId);
-      if (!subUser) return res.status(404).json({ message: "Subuser not found" });
+      if (!subUser)
+        return res.status(404).json({ message: "Subuser not found" });
 
       const admin = await User.findById(subUser.adminId);
-      if (!admin) return res.status(404).json({ message: "Admin for subuser not found" });
+      if (!admin)
+        return res.status(404).json({ message: "Admin for subuser not found" });
 
       twilioSid = admin.twilioSid;
       twilioToken = admin.twilioToken;
@@ -1173,7 +1137,6 @@ router.get("/get-twilio-data", verifyToken, async (req, res) => {
       }
     );
 
-    console.log(twilioResponse)
     const messages = twilioResponse.data.messages;
 
     res.status(200).json({
@@ -1326,17 +1289,16 @@ router.post("/transcript", async (req, res) => {
   }
 });
 
-
 router.post("/transcript-all", verifyToken, async (req, res) => {
   try {
     let twilioConfig, vapiConfig;
-
-    console.log("Come");
     if (req.role === "subuser") {
       // If user is a subuser, fetch their admin's configuration
       const subUser = await SubUser.findById(req.userId).populate("adminId");
       if (!subUser || !subUser.adminId) {
-        return res.status(404).json({ error: "Admin configuration not found for subuser" });
+        return res
+          .status(404)
+          .json({ error: "Admin configuration not found for subuser" });
       }
       const admin = subUser.adminId;
 
@@ -1358,8 +1320,15 @@ router.post("/transcript-all", verifyToken, async (req, res) => {
     }
 
     // Validate Twilio/VAPI configuration
-    if (!twilioConfig.sid || !twilioConfig.token || !twilioConfig.num || !vapiConfig) {
-      return res.status(404).json({ error: "Configuration missing for this user" });
+    if (
+      !twilioConfig.sid ||
+      !twilioConfig.token ||
+      !twilioConfig.num ||
+      !vapiConfig
+    ) {
+      return res
+        .status(404)
+        .json({ error: "Configuration missing for this user" });
     }
 
     // Initialize Twilio Client
@@ -1370,9 +1339,7 @@ router.post("/transcript-all", verifyToken, async (req, res) => {
 
     // Fetch call transcripts from VAPI client (assuming client1 is correctly configured)
     const vapiResponse = await twilioClient.calls.list();
-
-    console.log(vapiResponse[0])
-    const transcripts = vapiResponse.map(call => ({
+    const transcripts = vapiResponse.map((call) => ({
       name: call.callerName || "Name not available",
       phoneNumber: call.callerPhoneNumber || "Phone number not available",
       transcript: call.transcript || "Transcript not available",
@@ -1386,16 +1353,11 @@ router.post("/transcript-all", verifyToken, async (req, res) => {
   }
 });
 
-
-
 router.get("/admin/users", async (req, res) => {
   try {
     const token = req.headers.authorization.split(" ")[1];
     const decoded = jwt.verify(token, JWT_SECRET);
     const user = await User.findById(decoded.userId);
-
-    console.log(user.role)
-
     if (user.role !== "admin" && user.role !== "super_admin") {
       return res.status(403).json({ message: "Access denied: Admins only" });
     }
@@ -1491,9 +1453,8 @@ router.put("/admin/users", async (req, res) => {
   }
 });
 
-
 const clientmail = require("@sendgrid/client");
-clientmail.setDefaultRequest('qs', { limit: 5, offset: 15 });
+clientmail.setDefaultRequest("qs", { limit: 5, offset: 15 });
 
 router.get("/get-mail-data", verifyToken, async (req, res) => {
   const { userId, role } = req;
@@ -1504,12 +1465,15 @@ router.get("/get-mail-data", verifyToken, async (req, res) => {
 
     if (role === "admin") {
       adminUser = await User.findById(userId);
-      if (!adminUser) return res.status(404).json({ message: "Admin user not found" });
+      if (!adminUser)
+        return res.status(404).json({ message: "Admin user not found" });
     } else if (role === "subuser") {
       const subUser = await SubUser.findById(userId);
-      if (!subUser) return res.status(404).json({ message: "Sub-user not found" });
+      if (!subUser)
+        return res.status(404).json({ message: "Sub-user not found" });
       adminUser = await User.findById(subUser.adminId);
-      if (!adminUser) return res.status(404).json({ message: "Admin user not found" });
+      if (!adminUser)
+        return res.status(404).json({ message: "Admin user not found" });
     } else {
       return res.status(403).json({ message: "Unauthorized access" });
     }
@@ -1519,7 +1483,9 @@ router.get("/get-mail-data", verifyToken, async (req, res) => {
     startDate.setDate(startDate.getDate() - days);
 
     // Filter mainCount to get entries within the specified range
-    const recentEmailData = adminUser.mainCount.filter((entry) => entry.date >= startDate);
+    const recentEmailData = adminUser.mainCount.filter(
+      (entry) => entry.date >= startDate
+    );
 
     res.status(200).json({ emailData: recentEmailData });
   } catch (error) {
@@ -1528,69 +1494,56 @@ router.get("/get-mail-data", verifyToken, async (req, res) => {
   }
 });
 
-
-
-
-
 async function testSendGridApiKey(apiKey) {
   if (!apiKey || typeof apiKey !== "string" || apiKey.trim() === "") {
-    console.error("Invalid API Key. Ensure the API key is correctly set and not empty.");
     return null;
   }
 
   const sendGridApiUrl = `https://api.sendgrid.com/v3/user/account`;
 
   try {
-    console.log("Testing API Key (first 4 chars):", apiKey.slice(0, 4) + "****");
-
     const response = await axios.get(sendGridApiUrl, {
       headers: {
         Authorization: `Bearer ${apiKey.trim()}`,
       },
     });
 
-    console.log("Account data retrieved successfully:", response.data);
-
     clientmail.setApiKey(apiKey);
     const request = {
-      url: '/v3/mail_settings',
-      method: 'GET',
+      url: "/v3/mail_settings",
+      method: "GET",
     };
 
     // Fetch mail settings
     const [mailResponse, mailBody] = await clientmail.request(request);
-    console.log("Mail settings retrieved successfully:", mailBody);
 
     return {
       accountData: response.data,
       mailSettings: mailBody,
     };
-
   } catch (error) {
-    console.error("Authorization test failed:", error.message, error.response?.data);
+    console.error(
+      "Authorization test failed:",
+      error.message,
+      error.response?.data
+    );
 
     if (error.response?.status === 403) {
-      console.error("Access forbidden: Verify that your API key has Full Access permissions in SendGrid.");
+      console.error(
+        "Access forbidden: Verify that your API key has Full Access permissions in SendGrid."
+      );
     } else if (error.response?.status === 401) {
-      console.error("Unauthorized: The API key may be incorrect, inactive, or expired.");
+      console.error(
+        "Unauthorized: The API key may be incorrect, inactive, or expired."
+      );
     }
     return null;
   }
 }
 
-
-
-
-
-
-
 router.delete("/admin/users/:id", async (req, res) => {
   try {
     const { id } = req.params;
-
-    console.log(id)
-    console.log("Heerereeeee")
-    // Use $unset to remove only specific fields
     await User.findByIdAndUpdate(id, {
       $unset: {
         twilioSid: "",
@@ -1598,7 +1551,7 @@ router.delete("/admin/users/:id", async (req, res) => {
         twilioNum: "",
         vapiPhoneNumberId: "",
         vapiSipUri: "",
-      }
+      },
     });
 
     res.status(200).json({ message: "Specified fields removed successfully" });
@@ -1608,12 +1561,12 @@ router.delete("/admin/users/:id", async (req, res) => {
   }
 });
 
-
 router.post("/config-mail", async (req, res) => {
   try {
     // Extract the token from the Authorization header
     const token = req.headers.authorization.split(" ")[1];
-    if (!token) return res.status(403).json({ message: "Authorization token required" });
+    if (!token)
+      return res.status(403).json({ message: "Authorization token required" });
 
     // Verify and decode the token
     const decoded = jwt.verify(token, JWT_SECRET);
@@ -1635,10 +1588,14 @@ router.post("/config-mail", async (req, res) => {
     // Save the updated user data
     await user.save();
 
-    return res.status(200).json({ message: "Configuration added successfully!" });
+    return res
+      .status(200)
+      .json({ message: "Configuration added successfully!" });
   } catch (error) {
     console.error("Error in config-mail route:", error);
-    return res.status(500).json({ message: "An error occurred while adding configuration", error });
+    return res
+      .status(500)
+      .json({ message: "An error occurred while adding configuration", error });
   }
 });
 
@@ -1658,10 +1615,17 @@ router.delete("/admin/sendgrid/:userId", verifyToken, async (req, res) => {
       },
     });
 
-    return res.status(200).json({ message: "SendGrid configuration removed successfully" });
+    return res
+      .status(200)
+      .json({ message: "SendGrid configuration removed successfully" });
   } catch (error) {
     console.error("Error deleting SendGrid configuration:", error);
-    return res.status(500).json({ message: "An error occurred while deleting SendGrid configuration", error });
+    return res
+      .status(500)
+      .json({
+        message: "An error occurred while deleting SendGrid configuration",
+        error,
+      });
   }
 });
 
@@ -1679,14 +1643,21 @@ router.put("/admin/sendgrid/update/:userId", verifyToken, async (req, res) => {
 
     await user.save();
 
-    return res.status(200).json({ message: "SendGrid configuration updated successfully" });
+    return res
+      .status(200)
+      .json({ message: "SendGrid configuration updated successfully" });
   } catch (error) {
     console.error("Error updating SendGrid configuration:", error);
-    return res.status(500).json({ message: "An error occurred while updating SendGrid configuration", error });
+    return res
+      .status(500)
+      .json({
+        message: "An error occurred while updating SendGrid configuration",
+        error,
+      });
   }
 });
 
-const path = require("path")
+const path = require("path");
 router.get("/download-call", (req, res) => {
   const filePath = path.join(__dirname, "../sample/bulk-call-server.xlsx"); // Path to your sample file
   res.download(filePath, "sample-call.xlsx", (err) => {
@@ -1723,19 +1694,13 @@ router.get("/admin/users-callToken", async (req, res) => {
     return res.status(201).json({ message: "Data", data: user.tokenCall });
   }
   return res.status(403).json({ message: "Access denied" });
-})
-
+});
 
 const fs = require("fs");
 
 const updateEnvFile = (tokenCall) => {
   // Adjust path as needed based on your folder structure
   const envFilePath = path.join(__dirname, "../../client/dist/env.js");
-
-  // Debugging: Check the constructed file path
-  console.log("Path to env.js:", envFilePath);
-
-  // Check if the directory exists before writing to the file
   if (!fs.existsSync(path.dirname(envFilePath))) {
     console.error("Directory does not exist:", path.dirname(envFilePath));
     return;
@@ -1759,15 +1724,15 @@ router.put("/admin/callToken/update", async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   const decoded = jwt.verify(token, JWT_SECRET);
   const user = await User.findById(decoded.userId);
-
-  console.log(req.body)
   if (user.role === "super_admin") {
-    const dat = await User.findByIdAndUpdate(user._id, { tokenCall: req.body.sendGridEmail })
+    const dat = await User.findByIdAndUpdate(user._id, {
+      tokenCall: req.body.sendGridEmail,
+    });
     updateEnvFile(req.body.sendGridEmail);
     return res.status(201).json({ message: "Data Updated" });
   }
   return res.status(403).json({ message: "Access denied" });
-})
+});
 
 router.delete("/admin/vapi-delete", async (req, res) => {
   try {
@@ -1795,11 +1760,11 @@ router.delete("/admin/vapi-delete", async (req, res) => {
 
 router.post("/config-call", async (req, res) => {
   try {
-    console.log(req.body.tokenCall)
-    // Check if the Authorization header is present
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "Authorization header missing or invalid" });
+      return res
+        .status(401)
+        .json({ message: "Authorization header missing or invalid" });
     }
 
     // Extract the token
@@ -1821,7 +1786,9 @@ router.post("/config-call", async (req, res) => {
 
     // Update the user's callToken
     if (!req.body.tokenCall) {
-      return res.status(400).json({ message: "Missing tokenCall in request body" });
+      return res
+        .status(400)
+        .json({ message: "Missing tokenCall in request body" });
     }
 
     await User.findByIdAndUpdate(user._id, { tokenCall: req.body.tokenCall });
@@ -1837,7 +1804,6 @@ router.post("/config-call", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
-
 
 router.get("/home", authMiddleware, (req, res) => {
   res.flash("Welcome to home page");
