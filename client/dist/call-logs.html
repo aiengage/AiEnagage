@@ -807,6 +807,7 @@
     // Add a test button to the UI
     const testButton = document.createElement("button");
     testButton.className = "btn btn-primary m-3";
+    testButton.textContent = "Analyze Transcript";
     testButton.onclick = fetchAndAnalyzeTranscripts;
     document.querySelector(".page-title").appendChild(testButton);
   </script>
