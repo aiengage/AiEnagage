@@ -865,7 +865,6 @@ router.post("/check-bulk-credit", verifyToken, async (req, res) => {
       user = await User.findById(userId);
       return res.json({
         message: "Sufficient credits available",
-        remainingCredits: availableCredits,
         vapiPhoneNumberId: user.vapiPhoneNumberId,
       });
     }
