@@ -12,6 +12,7 @@ const connectDb = require("./utils/db");
 const router = require("./routes/userRoute.js");
 const authMiddleware = require("./middlewares/authMiddleware");
 const paymentRoute = require("./routes/paymentRoute.js");
+const prmoptRoute = require("./routes/promptRoute.js");
 const flashMiddleWare = require("./middlewares/flashMiddleware.js");
 const cron = require("node-cron");
 
@@ -35,6 +36,7 @@ app.use("/api/messages", sendMessageRoutes);
 app.use("/calendar", googleCalendar);
 app.use("/imf", callLogsRoutes); // Add this line
 app.use("/api/auth", paymentRoute);
+app.use("/api/prompts", prmoptRoute);
 
 // Add dummy keepalive endpoint
 app.get("/keepalive", (req, res) => {

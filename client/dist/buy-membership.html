@@ -285,7 +285,12 @@ button:hover {
                     <span>Add Vapi</span>
                   </a>
                 </li>
-
+                <li class="sidebar-item" style="display: none" id="prompt">
+                  <a href="add-prompt.html" class="sidebar-link">
+                    <i class="bi bi-calendar-check-fill"></i>
+                    <span>Add Prompt</span>
+                  </a>
+                </li>
                 
                 <div id="bulk-email-sms" style="display: none">
                   <li class="sidebar-item">
@@ -580,7 +585,10 @@ button:hover {
           const editConfig = document.getElementById("edit-config");
           const sendConfig = document.getElementById("send-config");
           const vapiConfig = document.getElementById("edit-vapi");
-
+          const prompt = document.getElementById("prompt");
+        if (role === "super_admin") {
+          prompt.style.display = "block";
+        }
 if (role === "super_admin") {
     vapiConfig.style.display = "block";
 }

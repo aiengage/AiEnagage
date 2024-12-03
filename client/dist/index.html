@@ -163,7 +163,12 @@
                   </a>
                 </li>
               </div>
-
+              <li class="sidebar-item" style="display: none" id="prompt">
+                <a href="add-prompt.html" class="sidebar-link">
+                  <i class="bi bi-calendar-check-fill"></i>
+                  <span>Add Prompt</span>
+                </a>
+              </li>
               <div id="bulk-email-sms" style="display: none">
                 <li class="sidebar-item">
                   <a href="bulk-call-email.html" class="sidebar-link">
@@ -578,6 +583,7 @@
           const editConfig = document.getElementById("edit-config");
           const vapiConfig = document.getElementById("edit-vapi");
           const sendConfig = document.getElementById("send-config");
+          const prompt = document.getElementById("prompt");
           userName.textContent = data.data.name;
           userRole.textContent = data.role;
           userPhone.textContent = data.data.phone;
@@ -587,6 +593,7 @@
             editConfig.style.display = "block";
             sendConfig.style.display = "block";
             vapiConfig.style.display = "block";
+            prompt.style.display = "block";
           } else if (role === "admin") {
             editConfig.style.display = "block";
             sendConfig.style.display = "block";

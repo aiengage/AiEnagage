@@ -93,6 +93,12 @@
       backdrop-filter: blur(5px);
       background: rgba(0, 0, 0, 0.5);
     }
+
+    #addConfigSection {
+      position: relative;
+      left: 100px;
+      /* This will shift the element 20px to the right */
+    }
   </style>
 </head>
 
@@ -105,7 +111,7 @@
             <div class="logo">
               <a href="index.html">
                 <img src="assets/images/logo/logo.png" alt="Logo" srcset="" class="logo1"
-                  style="width: 150px; height: auto;" /></a>
+                  style="width: 150px; height: auto" /></a>
             </div>
             <div class="toggler">
               <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
@@ -143,7 +149,6 @@
                   <span>Call Logs</span>
                 </a>
               </li>
-
             </div>
 
             <div id="admin-super_admin" style="display: none">
@@ -159,19 +164,19 @@
                   <span>Appointment</span>
                 </a>
               </li>
-              <li class="sidebar-item active" style="display: none;" id="edit-config">
+              <li class="sidebar-item" style="display: none" id="edit-config">
                 <a href="Edit-Config.html" class="sidebar-link">
                   <i class="bi bi-calendar-check-fill"></i>
                   <span>Connect Twilio</span>
                 </a>
               </li>
-              <li class="sidebar-item" style="display: none;" id="edit-vapi">
+              <li class="sidebar-item" style="display: none" id="edit-vapi">
                 <a href="vapiConfig.html" class="sidebar-link">
                   <i class="bi bi-calendar-check-fill"></i>
                   <span>Add Vapi</span>
                 </a>
               </li>
-              <li class="sidebar-item" style="display: none" id="prompt">
+              <li class="sidebar-item active" style="display: none" id="prompt">
                 <a href="add-prompt.html" class="sidebar-link">
                   <i class="bi bi-calendar-check-fill"></i>
                   <span>Add Prompt</span>
@@ -193,14 +198,19 @@
                 </li>
               </div>
 
-
-              <li class="sidebar-item" style="display: none;" id="send-config">
+              <li class="sidebar-item" style="display: none" id="send-config">
                 <a href="sendgrid-config.html" class="sidebar-link">
                   <i class="bi bi-calendar-check-fill"></i>
                   <span>Connect SendGrid</span>
                 </a>
               </li>
             </div>
+            <!-- <li class="sidebar-item">
+                    <a href="#" class="sidebar-link" id="logout-btn">
+                      <i class="bi bi-calendar-check-fill"></i>
+                      <span>Logout</span>
+                    </a>
+                  </li> -->
           </ul>
         </div>
       </div>
@@ -223,7 +233,17 @@
               </a>
             </li>
             <li>
-
+              <!-- <hr
+                style="
+                  border: none;
+                  height: 0.5px;
+                  background-color: #e9ecef;
+                  margin: 0.5rem 0;
+                  width: calc(100% - 1rem);
+                  margin-left: auto;
+                  margin-right: auto;
+                "
+              /> -->
             </li>
             <li>
               <a class="dropdown-item" href="#" id="logout-btn">
@@ -233,19 +253,15 @@
           </ul>
         </div>
       </header>
-      <button id="redirectToTwilio" class="btn btn-primary btn-sm ml-2">
-        Go to Twilio Dashboard
-      </button>
+
       <div id="adminTableSection" class="container-fluid table-container" style="display: none">
         <h3 class="text-center mb-4">Admin Information</h3>
         <div class="table-responsive">
           <table class="table table-hover table-bordered" id="userTable">
             <thead class="thead-light">
               <tr>
-                <th scope="col">Twilio SID</th>
-                <th scope="col">Twilio Auth Token</th>
-                <th scope="col">Twilio Phone Number</th>
-                <th scope="col">Vapi ID</th>
+                <th scope="col">SendGrid Email</th>
+                <th scope="col">SendGrid Api Key</th>
                 <th scope="col" id="action-tag-super_admin" style="display: block">
                   Action
                 </th>
@@ -260,13 +276,38 @@
     </div>
   </div>
 
+  <section id="addConfigSection" class="vh-100 gradient-custom" style="display: block">
+    <div class="container py-5 h-70">
+      <div class="row justify-content-center align-items-center h-70">
+        <div class="col-12 col-lg-9 col-xl-7">
+          <h2>Prompt Management</h2>
+          <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#editUserModal">
+            Add New Prompt
+          </button>
+
+          <!-- Table to display prompts -->
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Prompt Name</th>
+                <th scope="col">Prompt Details</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="promptTableBody">
+              <!-- Dynamic table rows will be inserted here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Modal for Add/Edit Prompt -->
   <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="editUserModalLabel">
-            Edit User Information
-          </h5>
+          <h5 class="modal-title" id="editUserModalLabel">Edit Prompt</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -274,20 +315,17 @@
         <div class="modal-body">
           <form id="editUserForm">
             <div class="form-group">
-              <label for="editTwilioSid">Twilio SID</label>
-              <input type="text" class="form-control" id="editTwilioSid" name="twilioSid" />
+              <label for="editPromptName">Prompt Name</label>
+              <input type="text" class="form-control" id="editPromptName" name="promptName" required />
             </div>
             <div class="form-group">
-              <label for="editTwilioToken">Twilio Auth Token</label>
-              <input type="text" class="form-control" id="editTwilioToken" name="twilioToken" />
-            </div>
-            <div class="form-group">
-              <label for="editTwilioNum">Twilio Phone Number</label>
-              <input type="text" class="form-control" id="editTwilioNum" name="twilioNum" />
+              <label for="editPromptDetails">Prompt Details</label>
+              <textarea type="text" class="form-control" id="editPromptDetails" name="promptDetails"
+                required></textarea>
             </div>
 
-            <input type="hidden" id="editUserId" />
-            <button type="button" class="btn btn-primary" onclick="saveUserChanges()">
+            <input type="hidden" id="editPromptId" />
+            <button type="button" class="btn btn-primary" onclick="savePromptChanges()">
               Save Changes
             </button>
           </form>
@@ -295,49 +333,6 @@
       </div>
     </div>
   </div>
-
-  <section id="addConfigSection" class="vh-100 gradient-custom" style="display: none">
-    <div class="container py-5 h-70">
-      <div class="row justify-content-center align-items-center h-70">
-        <div class="col-12 col-lg-9 col-xl-7">
-          <div class="card shadow-2-strong card-registration" style="border-radius: 15px">
-            <div class="card-body p-4 p-md-5">
-              <h3 class="mb-4 pb-2 pb-md-0 mb-md-5">Add Configuration</h3>
-              <form id="memberForm">
-                <div class="row">
-                  <div class="col-md-6 mb-4">
-                    <div class="form-outline">
-                      <label class="form-label" for="name">Enter Twilio Sid</label>
-                      <input type="text" id="name" class="form-control form-control-lg" required />
-                    </div>
-                  </div>
-                  <div class="col-md-6 mb-4">
-                    <div class="form-outline">
-                      <label class="form-label" for="email">Enter Twilio Auth Token</label>
-                      <input type="text" id="email" class="form-control form-control-lg" required />
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-md-6 mb-4">
-                    <div class="form-outline">
-                      <label class="form-label" for="password">Enter Twilio Phone</label>
-                      <input type="text" id="password" class="form-control form-control-lg" required />
-                    </div>
-                  </div>
-                </div>
-
-                <div class="mt-4 pt-2">
-                  <input class="btn btn-primary btn-lg" type="submit" value="Add Config" />
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
 </body>
 
 <script src="assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
@@ -355,16 +350,13 @@
 <script src="./env.js"></script>
 <script>
   const logoutBtn = document.getElementById("logout-btn");
-  document.getElementById('redirectToTwilio').addEventListener('click', function () {
-    // Redirect to Twilio dashboard
-    window.location.href = "https://www.twilio.com/console";
-  });
+
   logoutBtn.addEventListener("click", () => {
     localStorage.removeItem("token");
     window.location.href = "login.html";
   });
-  document.querySelector('.close').addEventListener('click', function () {
-    $('#editUserModal').modal('hide');
+  document.querySelector(".close").addEventListener("click", function () {
+    $("#editUserModal").modal("hide");
   });
   async function validateToken() {
     const token = localStorage.getItem("token");
@@ -376,51 +368,57 @@
     }
     showLoader();
     try {
-      const response = await fetch(
-        `${url}/api/auth/validate`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${url}/api/auth/validate`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
       hideLoader();
       if (!response.ok) {
         throw new Error("Token validation failed");
       }
 
       const data = await response.json();
-      fetchUserInformation();
       if (!data.valid) {
         // If token is not valid, redirect to login page
         window.location.href = "login.html";
       }
-      const role = data.role;
 
+      console.log(data);
+      fetchPrompts();
+      const role = data.role;
+      const sendConfig = document.getElementById("send-config");
       const vapiConfig = document.getElementById("edit-vapi");
+      const prompt = document.getElementById("prompt");
 
       if (role === "super_admin") {
         vapiConfig.style.display = "block";
+        prompt.style.display = "block";
       }
+      //console.log(role);
+
+      // if (role === "admin") {
+      //   fetchAllUsers(localStorage.getItem("token"));
+      // }
+
+      // if (role === "super_admin") {
+      //   fetchAllAdmins(localStorage.getItem("token"));
+      // }
       const editConfig = document.getElementById("edit-config");
-      const sendConfig = document.getElementById("send-config");
-      const prompt = document.getElementById("prompt");
-        if (role === "super_admin") {
-          prompt.style.display = "block";
-        }
+
       if (role === "admin" || role === "super_admin") {
         document.getElementById("admin-super_admin").style.display = "block";
         editConfig.style.display = "block";
-        sendConfig.style.display = "block"
+        sendConfig.style.display = "block";
       }
 
       if (role === "super_admin" || role === "admin" || role === "subuser") {
-        document.getElementById("admin-subuser-features").style.display = "block";
+        document.getElementById("admin-subuser-features").style.display =
+          "block";
         document.getElementById("bulk-email-sms").style.display = "block";
       }
-
 
       if (role === "admin" || role === "subuser" || role === "super_admin") {
         const dropdownMenu = document.getElementById("dropdownMenu");
@@ -492,214 +490,127 @@ margin-right: auto;
   // Call the validateToken function when the page loads
   window.onload = validateToken;
 
-  document
-    .getElementById("memberForm")
-    .addEventListener("submit", async function (event) {
-      event.preventDefault(); // Prevent form from submitting the default way
+  let currentEditPromptId = null;
 
-      // Capture the form data
-      const twilioSid = document.getElementById("name").value;
-      const authToken = document.getElementById("email").value;
-      const twilioPhone = document.getElementById("password").value;
-      // Prepare data to be sent
-      const data = {
-        twilioSid: twilioSid,
-        twilioToken: authToken,
-        twilioNum: twilioPhone,
-      };
+  async function fetchPrompts() {
+    try {
+      const response = await fetch(`${url}/api/prompts/get`);
+      const prompts = await response.json();
+      console.log("Fetched prompts:", prompts); // Debug log
+      const tableBody = document.getElementById("promptTableBody");
 
+      tableBody.innerHTML = ""; // Clear existing rows
+      if (prompts.data && Array.isArray(prompts.data)) {
+        prompts.data.forEach((prompt) => {
+          const row = document.createElement("tr");
+          row.setAttribute("data-id", prompt._id); // Add data-id for reference
+          row.innerHTML = `
+          <td class="prompt-name">${prompt.name}</td>
+          <td class="prompt-details">${prompt.description}</td>
+          <td>
+            <button class="btn btn-primary" onclick="editPrompt('${prompt._id}')">Edit</button>
+            <button class="btn btn-danger" onclick="deletePrompt('${prompt._id}')">Delete</button>
+          </td>
+        `;
+          tableBody.appendChild(row);
+        });
+      } else {
+        tableBody.innerHTML =
+          "<tr><td colspan='3'>No prompts found</td></tr>";
+      }
+    } catch (error) {
+      console.error("Error fetching prompts:", error);
+    }
+  }
+
+  // Function to handle the "Add/Edit" button click
+  async function savePromptChanges() {
+    const name = document.getElementById("editPromptName").value;
+    const description = document.getElementById("editPromptDetails").value;
+
+    const promptData = { name, description };
+
+    if (currentEditPromptId) {
+      // Update existing prompt
       try {
-        // Send the form data to the backend using the fetch API
         const response = await fetch(
-          `${url}/api/auth/config`,
+          `${url}/api/prompts/update/${currentEditPromptId}`,
           {
-            method: "POST", // POST method for sending data
+            method: "PUT",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`, // Set headers
             },
-            body: JSON.stringify(data), // Convert data object to JSON string
+            body: JSON.stringify(promptData),
           }
         );
 
-        // Handle response from backend
         if (response.ok) {
-          const result = await response.json();
-          // Display success message with SweetAlert2
-          fetchUserInformation();
-          Swal.fire({
-            icon: "success",
-            title: "Success",
-            text: "Configuration added successfully!",
-          });
+          Swal.fire("Success", "Prompt updated successfully!", "success");
+          $("#editUserModal").modal("hide");
+          fetchPrompts();
         } else {
-          // Display failure message with SweetAlert2
-          Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Failed to add configuration.",
-          });
+          Swal.fire("Error", "Failed to update prompt", "error");
         }
       } catch (error) {
-        console.error("Error:", error);
-        // Display error message with SweetAlert2
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "An error occurred while submitting the form.",
-        });
+        console.error("Error updating prompt:", error);
       }
-    });
-  async function fetchUserInformation() {
-    const token = localStorage.getItem("token");
-
-    try {
-      const response = await fetch(
-        `${url}/api/auth/admin/users`,
-        {
-          method: "GET",
+    } else {
+      console.log(promptData);
+      // Create new prompt
+      try {
+        const response = await fetch(`${url}/api/prompts/add`, {
+          method: "POST",
           headers: {
-            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
+          body: JSON.stringify(promptData),
+        });
+
+        if (response.ok) {
+          Swal.fire("Success", "Prompt created successfully!", "success");
+          $("#editUserModal").modal("hide");
+          fetchPrompts();
+        } else {
+          Swal.fire("Error", "Failed to create prompt", "error");
         }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch user information");
+      } catch (error) {
+        console.error("Error creating prompt:", error);
       }
-
-      const users = await response.json();
-      const userTableBody = document.getElementById("userTableBody");
-      userTableBody.innerHTML = "";
-
-      const allFieldsEmpty =
-        !users.twilioSid &&
-        !users.twilioToken &&
-        !users.twilioNum &&
-        !users.vapiPhoneNumberId;
-
-      if (allFieldsEmpty) {
-        document.getElementById("addConfigSection").style.display = "block";
-        document.getElementById("adminTableSection").style.display = "none";
-      } else {
-        // Populate the table with user data if values are present
-        const row = `<tr>
-      <td>${users.twilioSid || ""}</td>
-      <td>${users.twilioToken || ""}</td>
-      <td>${users.twilioNum || ""}</td>
-      <td>${users.vapiPhoneNumberId || ""}</td>
-      <td>
-            <button class="btn btn-primary btn-sm" onclick="openEditModal('${users._id
-          }', '${users.twilioSid}', '${users.twilioToken}', '${users.twilioNum
-          }')">Edit</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteUser('${users._id
-          }')">Delete</button>
-  </td>
-    </tr>`;
-        userTableBody.innerHTML = row;
-
-        // Show the table and hide the "Add Configuration" section
-        document.getElementById("addConfigSection").style.display = "none";
-        document.getElementById("adminTableSection").style.display = "block";
-      }
-    } catch (error) {
-      console.error("Error fetching user data:", error);
     }
   }
 
-  function openEditModal(userId, twilioSid, twilioToken, twilioNum) {
-    document.getElementById("editTwilioSid").value = twilioSid;
-    document.getElementById("editTwilioToken").value = twilioToken;
-    document.getElementById("editTwilioNum").value = twilioNum;
-    document.getElementById("editUserId").value = userId;
+  // Function to handle editing a prompt
+  function editPrompt(id) {
+    currentEditPromptId = id;
+    const prompt = document.querySelector(
+      `#promptTableBody tr[data-id="${id}"]`
+    );
+    const name = prompt.querySelector(".prompt-name").textContent.trim();
+    const details = prompt
+      .querySelector(".prompt-details")
+      .textContent.trim();
 
-    // Show the modal
+    document.getElementById("editPromptName").value = name;
+    document.getElementById("editPromptDetails").value = details;
+
     $("#editUserModal").modal("show");
   }
 
-  async function deleteUser(userId) {
+  // Function to handle deleting a prompt
+  async function deletePrompt(id) {
     try {
-      console.log(userId);
-      const response = await fetch(
-        `${url}/api/auth/admin/users/${userId}`,
-        {
-          method: "DELETE", // Correct placement of the HTTP method
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to delete user");
-      }
-
-      const data = await response.json();
-      Swal.fire({
-        icon: "success",
-        title: "Success",
-        text: 'User Deleted Successfully',
-      });
-      fetchUserInformation(); // Refresh the user list after deletion
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Internal Server Error",
-        text: "Internal Server Error",
-      });
-      console.error("Error deleting user:", error);
-    }
-  }
-
-  async function saveUserChanges() {
-    const userId = document.getElementById("editUserId").value;
-    const twilioSid = document.getElementById("editTwilioSid").value;
-    const twilioToken = document.getElementById("editTwilioToken").value;
-    const twilioNum = document.getElementById("editTwilioNum").value;
-    const token = localStorage.getItem("token");
-
-    try {
-      const response = await fetch(`${url}/api/auth/admin/users`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ twilioSid, twilioToken, twilioNum }),
+      const response = await fetch(`${url}/api/prompts/delete/${id}`, {
+        method: "DELETE",
       });
 
-      const data = await response.json();
-
-      console.log(data)
       if (response.ok) {
-        Swal.fire({
-          icon: "success",
-          title: "Success",
-          text: data.message,
-        });
-        fetchUserInformation();
-        $("#editUserModal").modal("hide");
-      } else if (data.error.statusCode === 400 && data.message) {
-        // Display a specific error for invalid phone number format
-        Swal.fire({
-          icon: "error",
-          title: "Invalid Phone Number",
-          text: data.error.body.message[0],
-        });
+        Swal.fire("Success", "Prompt deleted successfully!", "success");
+        fetchPrompts(); // Refresh the table
       } else {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: data.message || "Failed to save user changes",
-        });
+        Swal.fire("Error", "Failed to delete prompt", "error");
       }
     } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Internal Server Error",
-      });
-      console.error("Error saving user changes:", error);
+      console.error("Error deleting prompt:", error);
     }
   }
 </script>

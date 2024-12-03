@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Form Layout - Mazer Single Call</title>
+  <title>AiEngage Single Call</title>
 
   <link rel="preconnect" href="https://fonts.gstatic.com" />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
@@ -143,8 +143,12 @@
                   <span>Add Vapi</span>
                 </a>
               </li>
-
-
+              <li class="sidebar-item" style="display: none" id="prompt">
+                <a href="add-prompt.html" class="sidebar-link">
+                  <i class="bi bi-calendar-check-fill"></i>
+                  <span>Add Prompt</span>
+                </a>
+              </li>
 
 
 
@@ -155,6 +159,8 @@
                 </a>
               </li>
             </div>
+
+            
             <div id="bulk-email-sms" style="display: none">
               <li class="sidebar-item">
                 <a href="bulk-call-email.html" class="sidebar-link">
@@ -256,11 +262,7 @@
                               <option value="" disabled selected>
                                 Select an option
                               </option>
-                              <option value="Home Sellers">Home Sellers</option>
-                              <option value="Home Buyers">Home Buyers</option>
-                              <option value="Real Estate Investor / Wholesaler">
-                                Real Estate Investor / Wholesaler
-                              </option>
+
                               <option value="Custom">Custom</option>
                             </select>
                           </div>
@@ -431,6 +433,7 @@
           window.location.href = "login.html";
         }
         const role = data.role;
+        fetchPrompts()
         //console.log(role);
         if (role === "subuser") {
           document.getElementById("bulk-email-sms").style.display = "block";
@@ -443,6 +446,10 @@
         }
         const editConfig = document.getElementById("edit-config");
         const sendConfig = document.getElementById("send-config");
+        const prompt = document.getElementById("prompt");
+        if (role === "super_admin") {
+          prompt.style.display = "block";
+        }
         if (role === "admin") {
 
         }
@@ -539,42 +546,20 @@ margin-right: auto;
       const selectedLanguage = document.getElementById("language").value;
       // const prompt = document.getElementById("prompt").value;
       const selectedCategory = categorySelect.value;
-      const customValue = `Hi , ${firstName} + customValueInput.value`;
-      const prompt = selectedCategory === "Custom" ? customValue : selectedCategory;
-      let callPrompt;
+      const customValue = `Hi, ${firstName} ${customValueInput.value}`;
+      let prompt;
+
+      if (selectedCategory === "Custom") {
+        prompt = customValue;
+      } else {
+        const selectedOption = categorySelect.options[categorySelect.selectedIndex];
+        prompt = selectedOption.dataset.description.replace("${firstName}", firstName);
+      }
       if (!prompt) {
         Swal.fire({
           icon: "error",
           text: "Please select an option or enter a custom prompt.",
         });
-      } else {
-        // Setting up the call based on the selected option
-        callPrompt = selectedCategory === "Home Sellers"
-          ? `Greeting: "Hello ${firstName}, is this the owner of [Property Address]?" (If yes, proceed. If no, politely end the call.)\n
-      Qualifying Questions:\n
-      Motivation: "Can you tell me why you're considering selling your property?"\n
-      Property Condition: "Can you share a bit about the property's condition, such as the roof, A/C, or recent upgrades?"\n
-      Timeframe: "When are you looking to sell? Do you have a specific timeframe?"\n
-      Price: "What price are you hoping to get for the property?"\n
-      Additional Needs: "Is there anything specific you might need help with during the selling process?"\n
-      Closing: "Thank you for sharing. I'll review this with my team and follow up soon. Have a great day!"`
-          : selectedCategory === "Home Buyers"
-            ? `Greeting: "Hello ${firstName}, I understand you’re interested in buying a property. Is this a good time to speak?" (If yes, proceed. If no, ask for a convenient time to follow up.)\n
-      Qualifying Questions:\n
-      Budget: "Could you share your budget range for the property you’re interested in?"\n
-      Property Type: "What type of property are you looking for (e.g., single-family, condo)?"\n
-      Location: "Do you have a preferred location or neighborhood in mind?"\n
-      Additional Requirements: "Are there any specific features or amenities you’re looking for?"\n
-      Closing: "Thank you for your time. I’ll review this and follow up with some options. Have a great day!"`
-            : selectedCategory === "Real Estate Investor / Wholesaler"
-              ? `Greeting: "Hello${firstName}, I understand you're exploring investment opportunities in real estate. Is this a good time to speak?" (If yes, proceed. If no, ask for a convenient time to follow up.)\n
-      Qualifying Questions:\n
-      Investment Goals: "Could you tell me about your investment goals? Are you interested in long-term holds, fix-and-flips, or wholesaling?"\n
-      Budget: "What is your investment budget, or do you have a specific price range in mind?"\n
-      Preferred Location: "Are there any specific locations or neighborhoods you're interested in investing in?"\n
-      Additional Needs: "Are there any other specific requirements or amenities you’re looking for in investment properties?"\n
-      Closing: "Thank you for sharing. I'll review this with my team and follow up soon with suitable options. Have a great day!"`
-              : prompt;
       }
       if (selectedLanguage === "") {
         Swal.fire({
@@ -655,7 +640,7 @@ margin-right: auto;
                     messages: [
                       {
                         role: "system",
-                        content: callPrompt,
+                        content: prompt,
                       },
                     ],
                     knowledgeBase: {
@@ -818,7 +803,7 @@ Transcript:
 ${userDetails.transcript}
     `;
 
-    console.log('Come')
+        console.log('Come')
         const response = await fetch(`${url}/api/send-email-property`, {
           method: "POST",
           headers: {
@@ -1142,6 +1127,24 @@ ${userDetails.transcript}
         });
     }
 
+    async function fetchPrompts() {
+      try {
+        const response = await fetch(`${url}/api/prompts/get`);
+        const prompts = await response.json();
+        Array.from(categorySelect.options)
+          .slice(2) 
+          .forEach(option => option.remove());
+        prompts.data.forEach((prompt) => {
+          const option = document.createElement("option");
+          option.value = prompt.name;
+          option.textContent = prompt.name;
+          option.dataset.description = prompt.description; 
+          categorySelect.appendChild(option);
+        });
+      } catch (error) {
+        console.error("Error fetching prompts:", error);
+      }
+    }
 
 
   </script>

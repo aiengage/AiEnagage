@@ -113,14 +113,13 @@
           <div class="sidebar-header">
             <div class="d-flex justify-content-between">
               <div class="logo">
-                <a href="index.html"
-                  >
-                  <img 
-                  src="assets/images/logo/logo.png" 
-                  alt="Logo" 
-                  srcset="" 
-                  class="logo1" 
-                  style="width: 150px; height: auto;"
+                <a href="index.html">
+                  <img
+                    src="assets/images/logo/logo.png"
+                    alt="Logo"
+                    srcset=""
+                    class="logo1"
+                    style="width: 150px; height: auto"
                 /></a>
               </div>
               <div class="toggler">
@@ -182,14 +181,18 @@
                     <span>Connect Twilio</span>
                   </a>
                 </li>
-                <li class="sidebar-item" style="display: none;" id="edit-vapi">
+                <li class="sidebar-item" style="display: none" id="edit-vapi">
                   <a href="vapiConfig.html" class="sidebar-link">
                     <i class="bi bi-calendar-check-fill"></i>
                     <span>Add Vapi</span>
                   </a>
                 </li>
-
-
+                <li class="sidebar-item" style="display: none" id="prompt">
+                  <a href="add-prompt.html" class="sidebar-link">
+                    <i class="bi bi-calendar-check-fill"></i>
+                    <span>Add Prompt</span>
+                  </a>
+                </li>
 
                 <div id="bulk-email-sms" style="display: none">
                   <li class="sidebar-item">
@@ -205,10 +208,12 @@
                     </a>
                   </li>
                 </div>
-                
 
-
-                <li class="sidebar-item" style="display: none" id="send-config">
+                <li
+                  class="sidebar-item active"
+                  style="display: none"
+                  id="send-config"
+                >
                   <a href="sendgrid-config.html" class="sidebar-link">
                     <i class="bi bi-calendar-check-fill"></i>
                     <span>Connect SendGrid</span>
@@ -348,7 +353,6 @@
                   name="twilioToken"
                 />
               </div>
-              
 
               <input type="hidden" id="editUserId" />
               <button
@@ -376,13 +380,15 @@
               class="card shadow-2-strong card-registration"
               style="border-radius: 15px"
             >
-            <div class="card-body p-4 p-md-5">
+              <div class="card-body p-4 p-md-5">
                 <h3 class="mb-4 pb-2 pb-md-0 mb-md-5">Add Configuration</h3>
                 <form id="memberForm">
                   <div class="row">
                     <div class="col-md-5 mb-4">
                       <div class="form-outline">
-                        <label class="form-label" for="email">Enter SendGrid Email</label>
+                        <label class="form-label" for="email"
+                          >Enter SendGrid Email</label
+                        >
                         <input
                           type="text"
                           id="email"
@@ -393,7 +399,9 @@
                     </div>
                     <div class="col-md-5 mb-4">
                       <div class="form-outline">
-                        <label class="form-label" for="password">Enter SendGrid API Key</label>
+                        <label class="form-label" for="password"
+                          >Enter SendGrid API Key</label
+                        >
                         <input
                           type="text"
                           id="password"
@@ -402,7 +410,6 @@
                         />
                       </div>
                     </div>
-                   
                   </div>
                   <div class="col-md-4 d-flex align-items-end">
                     <input
@@ -413,7 +420,6 @@
                   </div>
                 </form>
               </div>
-              
             </div>
           </div>
         </div>
@@ -454,16 +460,13 @@
       }
       showLoader();
       try {
-        const response = await fetch(
-           `${url}/api/auth/validate`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`${url}/api/auth/validate`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
         hideLoader();
         if (!response.ok) {
           throw new Error("Token validation failed");
@@ -483,9 +486,9 @@
         const sendConfig = document.getElementById("send-config");
         const vapiConfig = document.getElementById("edit-vapi");
 
-if (role === "super_admin") {
-    vapiConfig.style.display = "block";
-}
+        if (role === "super_admin") {
+          vapiConfig.style.display = "block";
+        }
         //console.log(role);
 
         // if (role === "admin") {
@@ -496,7 +499,10 @@ if (role === "super_admin") {
         //   fetchAllAdmins(localStorage.getItem("token"));
         // }
         const editConfig = document.getElementById("edit-config");
-
+        const prompt = document.getElementById("prompt");
+        if (role === "super_admin") {
+          prompt.style.display = "block";
+        }
 
         if (role === "admin" || role === "super_admin") {
           document.getElementById("admin-super_admin").style.display = "block";
@@ -505,10 +511,10 @@ if (role === "super_admin") {
         }
 
         if (role === "super_admin" || role === "admin" || role === "subuser") {
-  document.getElementById("admin-subuser-features").style.display = "block";
-  document.getElementById("bulk-email-sms").style.display = "block"; 
-}
-
+          document.getElementById("admin-subuser-features").style.display =
+            "block";
+          document.getElementById("bulk-email-sms").style.display = "block";
+        }
 
         if (role === "admin" || role === "subuser" || role === "super_admin") {
           const dropdownMenu = document.getElementById("dropdownMenu");
@@ -594,17 +600,14 @@ margin-right: auto;
 
         try {
           // Send the form data to the backend using the fetch API
-          const response = await fetch(
-       `${url}/api/auth/config-mail`,
-            {
-              method: "POST", // POST method for sending data
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`, // Set headers
-              },
-              body: JSON.stringify(data), // Convert data object to JSON string
-            }
-          );
+          const response = await fetch(`${url}/api/auth/config-mail`, {
+            method: "POST", // POST method for sending data
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`, // Set headers
+            },
+            body: JSON.stringify(data), // Convert data object to JSON string
+          });
 
           if (response.ok) {
             const result = await response.json();
@@ -634,22 +637,16 @@ margin-right: auto;
         }
       });
 
-
-
-      
     async function fetchUserInformation() {
       const token = localStorage.getItem("token");
 
       try {
-        const response = await fetch(
-      `${url}/api/auth/admin/users`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`${url}/api/auth/admin/users`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!response.ok) {
           throw new Error("Failed to fetch user information");
@@ -673,7 +670,9 @@ margin-right: auto;
       <td>
             <button class="btn btn-primary btn-sm" onclick="openEditModal('${
               users._id
-            }', '${users.sendGridEmail}', '${users.sendGridApiKey}')">Edit</button>
+            }', '${users.sendGridEmail}', '${
+            users.sendGridApiKey
+          }')">Edit</button>
           <button class="btn btn-danger btn-sm" onclick="deleteUser('${
             users._id
           }')">Delete</button>
@@ -691,19 +690,19 @@ margin-right: auto;
     }
 
     function openEditModal(userId, sendGridEmail, sendGridApiKey) {
-  document.getElementById("editTwilioSid").value = sendGridEmail;
-  document.getElementById("editTwilioToken").value = sendGridApiKey;
-  document.getElementById("editUserId").value = userId;
+      document.getElementById("editTwilioSid").value = sendGridEmail;
+      document.getElementById("editTwilioToken").value = sendGridApiKey;
+      document.getElementById("editUserId").value = userId;
 
-  // Show the modal
-  $("#editUserModal").modal("show");
-}
+      // Show the modal
+      $("#editUserModal").modal("show");
+    }
 
     async function deleteUser(userId) {
       try {
         console.log(userId);
         const response = await fetch(
-         `${url}/api/auth/admin/sendgrid/${userId}`,
+          `${url}/api/auth/admin/sendgrid/${userId}`,
           {
             method: "DELETE", // Correct placement of the HTTP method
             headers: {
@@ -727,49 +726,51 @@ margin-right: auto;
     }
 
     async function saveUserChanges() {
-  const userId = document.getElementById("editUserId").value;
-  const sendGridEmail = document.getElementById("editTwilioSid").value;
-  const sendGridApiKey = document.getElementById("editTwilioToken").value;
-  const token = localStorage.getItem("token");
+      const userId = document.getElementById("editUserId").value;
+      const sendGridEmail = document.getElementById("editTwilioSid").value;
+      const sendGridApiKey = document.getElementById("editTwilioToken").value;
+      const token = localStorage.getItem("token");
 
-  try {
-  //  const response = await fetch(`http://localhost:3000/api/auth/admin/sendgrid/update/${userId}`, {
-    const response = await fetch(`${url}/api/auth/admin/sendgrid/update/${userId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ sendGridEmail, sendGridApiKey }),
-    });
+      try {
+        //  const response = await fetch(`http://localhost:3000/api/auth/admin/sendgrid/update/${userId}`, {
+        const response = await fetch(
+          `${url}/api/auth/admin/sendgrid/update/${userId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ sendGridEmail, sendGridApiKey }),
+          }
+        );
 
-    const data = await response.json();
-    console.log(data);
+        const data = await response.json();
+        console.log(data);
 
-    if (response.ok) {
-      Swal.fire({
-        icon: "success",
-        title: "Success",
-        text: data.message,
-      });
-      fetchUserInformation(); // Refresh user data
-      $("#editUserModal").modal("hide");
-    } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: data.message || "Failed to save user changes",
-      });
+        if (response.ok) {
+          Swal.fire({
+            icon: "success",
+            title: "Success",
+            text: data.message,
+          });
+          fetchUserInformation(); // Refresh user data
+          $("#editUserModal").modal("hide");
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: data.message || "Failed to save user changes",
+          });
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Internal Server Error",
+        });
+        console.error("Error saving user changes:", error);
+      }
     }
-  } catch (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Error",
-      text: "Internal Server Error",
-    });
-    console.error("Error saving user changes:", error);
-  }
-}
- 
- </script>
+  </script>
 </html>
