@@ -351,6 +351,7 @@ const sendgridEmail1 = require("@sendgrid/mail");
 router.post("/send-email-property", verifyTokenEmail, async (req, res) => {
   const { subject, message } = req.body;
   try {
+    console.log("come")
     sendgridEmail1.setApiKey(req.sendGridApiKey);
 
     // Define the email options

@@ -452,9 +452,10 @@
 
         const vapiConfig = document.getElementById("edit-vapi");
         const prompt = document.getElementById("prompt");
+        prompt.style.display = "block";
+
         if (role === "super_admin") {
           vapiConfig.style.display = "block";
-          prompt.style.display = "block";
         }
         if (role === "admin" || role === "super_admin") {
           document.getElementById("admin-super_admin").style.display =
@@ -693,8 +694,8 @@
           fetch("https://api.vapi.ai/call", callOptions)
             .then((response) => response.json())
             .then((data) => {
+              console.log(data)
               const callSid = data.id;
-              updateCredit(localStorage.getItem("token"));
               updateCallResults(
                 userName,
                 formattedPhoneNumber,
@@ -733,10 +734,10 @@
       });
     }
 
-    const updateCredit = async (token) => {
+    const updateCredit = async (token,callSid) => {
       try {
         const response = await fetch(
-          `${url}/api/auth/update-credit`,
+          `${url}/api/auth/update-credit?sid=${callSid}`,
           {
             method: "GET",
             headers: {
@@ -747,6 +748,7 @@
         );
         if (response.ok) {
           const data = await response.json();
+          console.log(data)
         } else if (response.status === 403) {
         } else {
           const errorData = await response.json();
@@ -784,6 +786,7 @@
             if (status === "ended") {
               // Send both SMS and email when call ends
               sendSMS(name, phoneNumber, endedReason);
+              updateCredit(localStorage.getItem("token"),callSid);
               const userDetails = {
                 name: name,
                 phone: phoneNumber,
@@ -873,7 +876,7 @@ ${userDetails.transcript}
           Authorization: `Bearer ${localStorage.getItem("token")}`
         },
         body: JSON.stringify({
-          toNumber: formattedNumber,
+          toNumber: phoneNumber,
           message: message,
         }),
       })
@@ -1049,19 +1052,14 @@ ${userDetails.transcript}
       try {
         const response = await fetch(`${url}/api/prompts/get`);
         const prompts = await response.json();
-
-        console.log(prompts.data)
-        // Clear existing options (except the default ones)
         Array.from(categorySelect.options)
-          .slice(2) // Keep the "Select an option" and "Custom" options
+          .slice(2)
           .forEach(option => option.remove());
-
-        // Populate dropdown with fetched prompts
         prompts.data.forEach((prompt) => {
           const option = document.createElement("option");
           option.value = prompt.name;
           option.textContent = prompt.name;
-          option.dataset.description = prompt.description; // Ensure this line exists
+          option.dataset.description = prompt.description; 
           categorySelect.appendChild(option);
         });
       } catch (error) {

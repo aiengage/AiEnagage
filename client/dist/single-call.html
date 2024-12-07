@@ -440,15 +440,15 @@
 
         }
         const vapiConfig = document.getElementById("edit-vapi");
-
         if (role === "super_admin") {
           vapiConfig.style.display = "block";
         }
         const editConfig = document.getElementById("edit-config");
         const sendConfig = document.getElementById("send-config");
         const prompt = document.getElementById("prompt");
+        prompt.style.display = "block";
+
         if (role === "super_admin") {
-          prompt.style.display = "block";
         }
         if (role === "admin") {
 
@@ -662,7 +662,6 @@ margin-right: auto;
               const callData = await callResponse.json();
               const callSid = callData.id;
               const token = localStorage.getItem("token");
-              updateCredit(token);
               updateCallResults(firstName, formattedPhoneNumber, "Call initiated successfully");
               const isCallEnded = await pollCallStatus(callSid, firstName, formattedPhoneNumber);
 
@@ -736,10 +735,10 @@ margin-right: auto;
     });
 
 
-    const updateCredit = async (token) => {
+    const updateCredit = async (token,callSid) => {
       try {
 
-        const response = await fetch(`${url}/api/auth/update-credit`, {
+        const response = await fetch(`${url}/api/auth/update-credit?sid=${callSid}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -850,6 +849,8 @@ ${userDetails.transcript}
           if (status === "ended") {
             // Send SMS first
             await sendSMS(name, phoneNumber, endedReason);
+            const token = localStorage.getItem('token')
+            updateCredit(token,callSid);
             const transcript = data.transcript; // Get transcript directly from the response
 
             if (transcript) {

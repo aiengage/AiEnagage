@@ -500,8 +500,9 @@
         // }
         const editConfig = document.getElementById("edit-config");
         const prompt = document.getElementById("prompt");
+        prompt.style.display = "block";
+
         if (role === "super_admin") {
-          prompt.style.display = "block";
         }
 
         if (role === "admin" || role === "super_admin") {

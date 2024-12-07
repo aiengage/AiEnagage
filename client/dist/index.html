@@ -587,20 +587,27 @@
           userName.textContent = data.data.name;
           userRole.textContent = data.role;
           userPhone.textContent = data.data.phone;
+          prompt.style.display = "block";
+
           if (role === "super_admin") {
             creditElement.textContent = "9999";
             userSubUser.textContent = "Super_Admin";
             editConfig.style.display = "block";
             sendConfig.style.display = "block";
             vapiConfig.style.display = "block";
-            prompt.style.display = "block";
           } else if (role === "admin") {
             editConfig.style.display = "block";
             sendConfig.style.display = "block";
-            creditElement.textContent = data.data.credits || "No credit";
+            const credits = data.data.credits
+              ? parseFloat(data.data.credits).toFixed(2)
+              : "No credit";
+            creditElement.textContent = credits;
             userSubUser.textContent = data.data.subUsers.length || "No Data";
           } else {
-            creditElement.textContent = data.data.credit || "No credit";
+            const credit = data.data.credit
+              ? parseFloat(data.data.credit).toFixed(2)
+              : "No credit";
+            creditElement.textContent = credit;
             userSubUser.textContent = "No Data";
           }
 

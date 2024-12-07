@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const User = require("../models/userModal.js");
 const router = express.Router();
 require("dotenv").config();
-
+const { VapiClient } = require("@vapi-ai/server-sdk");
 const nodemailer = require("nodemailer");
 const otpStore = {};
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -732,68 +732,168 @@ router.get("/check-credit", verifyToken, async (req, res) => {
   }
 });
 
+// router.get("/update-credit", verifyToken, async (req, res) => {
+//   try {
+//     const { userId, role } = req;
+//     const { sid } = req.query; // Retrieve the callSid from the request query
+//     let user;
+
+//     console.log(sid)
+//     if (!sid) {
+//       return res.status(400).json({ message: "callSid is required" });
+//     }
+
+//     // Check if the role is 'admin' or 'subuser'
+//     if (role === "admin") {
+//       user = await User.findById(userId);
+//     } else if (role === "subuser") {
+//       user = await SubUser.findById(userId);
+//       if (user && user.adminId) {
+//         adminUser = await User.findById(user.adminId);
+//       }
+//     } else if (role === "super_admin") {
+//       user = await User.findById(userId);
+//       return res.json({
+//         message: "Credit updated successfully",
+//         credits: user.credits,
+//       });
+//     }
+
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     let admin;
+//     if (role === "subuser") {
+//       admin = user.adminId;
+//       if (!admin) {
+//         return res
+//           .status(404)
+//           .json({ message: "Admin not found for this sub-user" });
+//       }
+//     }
+
+//     console.log("Commmememememmemm")
+
+//     const superAdminUser = await User.findOne({ role: "super_admin" });
+//     const tokenCall = superAdminUser.tokenCall;
+//     const client1 = new VapiClient({
+//       token: tokenCall,
+//     });
+
+//     const vapiResponse = await client1.calls.list();
+//     console.log(vapiResponse)
+//     const callDetails = vapiResponse.find(
+//       (call) => call.phoneCallProviderId === sid
+//     );
+
+//     console.log(callDetails);
+//     const creditToDeduct = 1;
+//     const deductCredit = (account, amount) => {
+//       if (account.credits && account.credits >= amount) {
+//         account.credits -= amount;
+//       } else if (account.credit && account.credit >= amount) {
+//         account.credit -= amount;
+//       }
+//     };
+
+//     // Deduct the calculated credit from the user
+//     deductCredit(user, creditToDeduct);
+
+//     // Save the updated user information
+//     await user.save();
+
+//     const remainingCredits = user.credits || user.credit;
+//     return res.json({
+//       message: "Credit updated successfully",
+//       credits: remainingCredits,
+//       deductedCredit: creditToDeduct,
+//       callDurationInMinutes: callDurationInMinutes,
+//     });
+//   } catch (error) {
+//     console.error("Error updating credits:", error);
+//     return res.status(500).json({ message: "Internal Server Error" });
+//   }
+// });
+
 router.get("/update-credit", verifyToken, async (req, res) => {
   try {
     const { userId, role } = req;
+    const { sid } = req.query;
     let user;
+    if (!sid) {
+      return res.status(400).json({ message: "callSid is required" });
+    }
 
-    // Check if the role is 'admin' or 'subuser'
+    // Determine the user based on the role
     if (role === "admin") {
-      // Find the user directly if they are an admin
       user = await User.findById(userId);
     } else if (role === "subuser") {
-      // Find the subuser
       user = await SubUser.findById(userId);
       if (user && user.adminId) {
-        // Find the corresponding admin using adminId from the subuser document
         adminUser = await User.findById(user.adminId);
       }
     } else if (role === "super_admin") {
-      // Fetch user details directly for super admin
       user = await User.findById(userId);
       return res.json({
         message: "Credit updated successfully",
         credits: user.credits,
       });
     }
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Initialize admin variable for clarity
-    let admin;
+    // Fetch the super admin user for API token
+    const superAdminUser = await User.findOne({ role: "super_admin" });
+    const tokenCall = superAdminUser.tokenCall;
+    const client1 = new VapiClient({
+      token: tokenCall,
+    });
 
-    // If the role is 'subuser', also fetch the admin and deduct their credits
-    if (role === "subuser") {
-      admin = user.adminId; // This comes from the populated adminId field
-      if (!admin) {
-        return res
-          .status(404)
-          .json({ message: "Admin not found for this sub-user" });
-      }
+    // Fetch call details
+    const vapiResponse = await client1.calls.list();
+    const callDetails = vapiResponse.find((call) => call.id === sid);
+    if (!callDetails || !callDetails.messages) {
+      return res.status(404).json({
+        message: "Call details or messages not found for the provided SID",
+      });
     }
 
-    // Deduct credit for both sub-user and admin if necessary
-    const deductCredit = (account) => {
-      if (account.credits && account.credits > 0) {
-        account.credits -= 1;
-      } else if (account.credit && account.credit > 0) {
-        account.credit -= 1;
-      }
-    };
-
-    // Deduct credit for the current user (admin or subuser)
-    deductCredit(user);
-
-    // Save the updated user information
-    await user.save();
-
-    // Return the updated credits in the response (choosing the correct field)
-    const remainingCredits = user.credits || user.credit;
-    return res.json({
-      message: "Credit updated successfully",
-      credits: remainingCredits,
+    // Process the messages array
+    let totalMinutes = 0;
+    callDetails.messages.forEach((message) => {
+      const durationInMinutes = Math.floor(message.duration || 0); // Convert ms to minutes
+      totalMinutes += durationInMinutes;
     });
+
+    totalMinutes = totalMinutes / 600;
+    let creditsToDeduct = totalMinutes * 0.0145;
+    if (creditsToDeduct > 0) {
+      const deductCredit = (account, amount) => {
+        if (account.credits && account.credits >= amount) {
+          account.credits -= amount;
+        } else if (account.credit && account.credit >= amount) {
+          account.credit -= amount;
+        }
+      };
+      deductCredit(user, creditsToDeduct);
+      await user.save();
+      const remainingCredits = user.credits || user.credit;
+      return res.json({
+        message: "Credit updated successfully",
+        credits: remainingCredits,
+        deductedCredit: creditsToDeduct,
+        totalMinutes,
+      });
+    } else {
+      return res.json({
+        message:
+          "No credits were deducted as the call duration was less than 3 minutes.",
+        totalMinutes,
+      });
+    }
   } catch (error) {
     console.error("Error updating credits:", error);
     return res.status(500).json({ message: "Internal Server Error" });
@@ -858,7 +958,6 @@ router.post("/check-bulk-credit", verifyToken, async (req, res) => {
       user = await SubUser.findById(userId).populate("adminId"); // Get subuser and populate admin details
 
       if (user && user.adminId) {
-        // Retrieve admin's information if subuser has an associated admin
         adminData = await User.findById(user.adminId);
       }
     } else if (role === "super_admin") {
@@ -872,13 +971,8 @@ router.post("/check-bulk-credit", verifyToken, async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
-    // Determine available credits (for subuser, check own or admin's credits)
-    const availableCredits =
-      user.credits || user.credit || (adminData ? adminData.credits : 0);
-
+    const availableCredits = user.credits || user.credit;
     if (availableCredits >= callCount) {
-      // Return success message including vapiPhoneNumberId from user or admin
       return res.json({
         message: "Sufficient credits available",
         remainingCredits: availableCredits,
@@ -1020,13 +1114,13 @@ router.post("/request-demo", verifyToken, async (req, res) => {
   }
 });
 
-const { VapiClient } = require("@vapi-ai/server-sdk");
-const client1 = new VapiClient({
-  token: "4b1711a0-b132-425e-b23d-de717e7c868c",
-});
-
 router.post("/config", async (req, res) => {
   try {
+    const superAdminUser = await User.findOne({ role: "super_admin" });
+    const tokenCall = superAdminUser.tokenCall;
+    const client1 = new VapiClient({
+      token: tokenCall,
+    });
     const token = req.headers.authorization.split(" ")[1];
     const decoded = jwt.verify(token, JWT_SECRET);
     const userId = decoded.userId;
@@ -1269,11 +1363,9 @@ router.post("/transcript", async (req, res) => {
 
   try {
     const vapiResponse = await client1.calls.list();
-
     const callDetails = vapiResponse.find(
       (call) => call.phoneCallProviderId === callSid
     );
-
     if (callDetails) {
       res.json({
         transcript: callDetails.transcript || "Transcript not available",
@@ -1619,12 +1711,10 @@ router.delete("/admin/sendgrid/:userId", verifyToken, async (req, res) => {
       .json({ message: "SendGrid configuration removed successfully" });
   } catch (error) {
     console.error("Error deleting SendGrid configuration:", error);
-    return res
-      .status(500)
-      .json({
-        message: "An error occurred while deleting SendGrid configuration",
-        error,
-      });
+    return res.status(500).json({
+      message: "An error occurred while deleting SendGrid configuration",
+      error,
+    });
   }
 });
 
@@ -1647,12 +1737,10 @@ router.put("/admin/sendgrid/update/:userId", verifyToken, async (req, res) => {
       .json({ message: "SendGrid configuration updated successfully" });
   } catch (error) {
     console.error("Error updating SendGrid configuration:", error);
-    return res
-      .status(500)
-      .json({
-        message: "An error occurred while updating SendGrid configuration",
-        error,
-      });
+    return res.status(500).json({
+      message: "An error occurred while updating SendGrid configuration",
+      error,
+    });
   }
 });
 

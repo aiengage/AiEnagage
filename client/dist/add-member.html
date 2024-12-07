@@ -412,9 +412,10 @@
         const sendConfig = document.getElementById("send-config");
         const vapiConfig = document.getElementById("edit-vapi");
         const prompt = document.getElementById("prompt");
+        prompt.style.display = "block";
         if (role === "super_admin") {
           vapiConfig.style.display = "block";
-          prompt.style.display = "block";
+        
         }
         if (role === "admin") {
 
