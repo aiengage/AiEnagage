@@ -26,13 +26,14 @@ const client = twilio(accountSid, authToken);
 const axios = require("axios");
 const VAPI_API_KEY = process.env.VAPI_API_KEY;
 const API_URL = "https://api.vapi.ai/call";
-const SENDGRID_API_KEY = process.env;
+const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(SENDGRID_API_KEY);
 
 router.post("/signup", async (req, res) => {
   const { name, email, password, phone } = req.body;
 
+  console.log(SENDGRID_API_KEY);
   try {
     // Check if the user already exists
     const userExists = await User.findOne({ email });
